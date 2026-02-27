@@ -4,15 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Engineering Toolkit | Full Lifecycle Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             /* Shared Palette */
-            --primary-ba: #7c3aed; /* Purple */
+            --primary-ba: #7c3aed; /* Violet */
             --primary-pm: #10b981; /* Emerald */
             --primary-arch: #f59e0b; /* Amber */
             --primary-dev: #06b6d4; /* Cyan */
             --primary-qa: #3b82f6; /* Blue */
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --primary-hub: #f43f5e; /* Rose */
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --card-radius: 16px;
+
+            /* Light Mode Defaults */
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --card-bg: #ffffff;
+            --card-border: rgba(128, 128, 128, 0.15);
+            --nav-bg: rgba(255, 255, 255, 0.85);
+            --input-bg: rgba(0, 0, 0, 0.05);
+            --modal-bg: #ffffff;
+            --preview-bg: #f1f5f9;
+        }
+
+        /* Dark Mode Variables */
+        .dark-mode {
+            --bg-color: #0b0f19;
+            --text-color: #f8fafc;
+            --card-bg: #1e293b;
+            --card-border: rgba(255, 255, 255, 0.1);
+            --nav-bg: rgba(11, 15, 25, 0.85);
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --modal-bg: #0f172a;
+            --preview-bg: rgba(0,0,0,0.3);
         }
 
         body {
@@ -20,298 +45,472 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             transition: background-color 0.4s ease, color 0.4s ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* --- Dynamic Theme States --- */
-        body.ba-theme { background-color: #f8fafc; color: #0f172a; }
-        body.pm-theme { background-color: #0f172a; color: #f8fafc; }
-        body.arch-theme { background-color: #171717; color: #f8fafc; }
-        body.dev-theme { background-color: #020617; color: #f8fafc; }
-        body.qa-theme { background-color: #09090b; color: #f8fafc; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(128, 128, 128, 0.3); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(128, 128, 128, 0.5); }
 
         /* --- Navigation Switcher --- */
         .nav-container {
             position: sticky;
             top: 0;
             z-index: 100;
-            padding: 1.2rem 2rem;
+            padding: 1.25rem 2rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 1rem;
-            background: rgba(255, 255, 255, 0.01);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+            gap: 1.25rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--card-border);
+            transition: var(--transition);
+        }
+
+        .nav-top-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            width: 100%;
+            max-width: 1200px;
+            align-items: center;
         }
 
         .nav-logo {
-            font-weight: 800;
-            font-size: 1.8rem;
-            letter-spacing: -0.5px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.6rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 0.6rem;
+            color: var(--text-color);
         }
+
+        .logo-icon { transition: var(--transition); }
+
+        /* Dynamic Nav Logo Icon Colors */
+        .ba-theme .logo-icon { stroke: var(--primary-ba); }
+        .pm-theme .logo-icon { stroke: var(--primary-pm); }
+        .arch-theme .logo-icon { stroke: var(--primary-arch); }
+        .dev-theme .logo-icon { stroke: var(--primary-dev); }
+        .qa-theme .logo-icon { stroke: var(--primary-qa); }
+        .hub-theme .logo-icon { stroke: var(--primary-hub); }
         
-        .nav-logo span {
-            transition: var(--transition);
-            margin-left: 0.3rem;
-        }
+        .nav-logo span { transition: var(--transition); font-weight: 800; }
 
         .ba-theme .nav-logo span { color: var(--primary-ba); }
         .pm-theme .nav-logo span { color: var(--primary-pm); }
         .arch-theme .nav-logo span { color: var(--primary-arch); }
         .dev-theme .nav-logo span { color: var(--primary-dev); }
         .qa-theme .nav-logo span { color: var(--primary-qa); }
+        .hub-theme .nav-logo span { color: var(--primary-hub); }
+
+        /* Controls: Search & Theme Toggle */
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .nav-search-wrapper {
+            width: 100%;
+            max-width: 650px;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-search-icon {
+            position: absolute;
+            left: 1.2rem;
+            opacity: 0.5;
+            width: 18px;
+            height: 18px;
+            pointer-events: none;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 0.75rem 1.2rem 0.75rem 2.8rem;
+            border-radius: 50px;
+            border: 1px solid var(--card-border);
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-bar:focus {
+            background: var(--card-bg);
+        }
+        
+        /* Dynamic Search Bar Focus Rings */
+        .ba-theme .search-bar:focus { box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2); border-color: var(--primary-ba); }
+        .pm-theme .search-bar:focus { box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); border-color: var(--primary-pm); }
+        .arch-theme .search-bar:focus { box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2); border-color: var(--primary-arch); }
+        .dev-theme .search-bar:focus { box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2); border-color: var(--primary-dev); }
+        .qa-theme .search-bar:focus { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); border-color: var(--primary-qa); }
+        .hub-theme .search-bar:focus { box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.2); border-color: var(--primary-hub); }
+
+        .theme-toggle-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        .theme-toggle-btn:hover { transform: scale(1.05); }
 
         .role-toggle {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            background: rgba(128, 128, 128, 0.15);
+            background: var(--input-bg);
             padding: 4px;
             border-radius: 50px;
             gap: 4px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid var(--card-border);
         }
 
         .toggle-btn {
-            padding: 0.7rem 1.4rem;
+            padding: 0.6rem 1.25rem;
             border-radius: 50px;
             border: none;
             cursor: pointer;
-            font-weight: 700;
-            font-size: 0.85rem;
+            font-weight: 600;
+            font-size: 0.8rem;
             letter-spacing: 0.5px;
             transition: var(--transition);
             color: #64748b;
             background: transparent;
         }
 
-        .ba-theme .role-toggle { background: #e2e8f0; } /* Lighter toggle for light mode */
+        .dark-mode .toggle-btn { color: #94a3b8; }
+        .toggle-btn:hover { color: var(--text-color); }
 
         /* Active Button States */
-        .ba-theme #btn-ba { background: var(--primary-ba); color: white; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); }
-        .pm-theme #btn-pm { background: var(--primary-pm); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
-        .arch-theme #btn-arch { background: var(--primary-arch); color: #000; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
-        .dev-theme #btn-dev { background: var(--primary-dev); color: #000; box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3); }
-        .qa-theme #btn-qa { background: var(--primary-qa); color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+        .ba-theme #btn-ba { background: var(--primary-ba); color: white; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3); }
+        .pm-theme #btn-pm { background: var(--primary-pm); color: white; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+        .arch-theme #btn-arch { background: var(--primary-arch); color: #000; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
+        .dev-theme #btn-dev { background: var(--primary-dev); color: #000; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
+        .qa-theme #btn-qa { background: var(--primary-qa); color: white; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
+        .hub-theme #btn-hub { background: var(--primary-hub); color: white; box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3); }
 
         /* --- Main Layout --- */
-        .content-wrap { max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem; }
-        .view-section { display: none; animation: fadeInUp 0.5s ease forwards; }
+        .content-wrap { max-width: 1200px; margin: 0 auto; padding: 4rem 1.5rem; }
+        .view-section { display: none; animation: fadeInUp 0.4s ease forwards; }
         .view-section.active { display: block; }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(15px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .header-block { text-align: center; margin-bottom: 4rem; }
-        .header-block h1 { font-size: 3rem; margin-bottom: 0.5rem; letter-spacing: -1px; }
-        .header-block p { font-size: 1.1rem; opacity: 0.8; }
+        
+        .header-block h1 { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 3.2rem; 
+            margin-bottom: 1rem; 
+            letter-spacing: -1.2px; 
+            font-weight: 800; 
+            color: var(--text-color);
+        }
+
+        /* Subtle Premium Gradients for Main Headers */
+        .ba-theme .header-block h1 { background: linear-gradient(135deg, var(--text-color) 0%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .pm-theme .header-block h1 { background: linear-gradient(135deg, var(--text-color) 0%, #10b981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .arch-theme .header-block h1 { background: linear-gradient(135deg, var(--text-color) 0%, #f59e0b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .dev-theme .header-block h1 { background: linear-gradient(135deg, var(--text-color) 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .qa-theme .header-block h1 { background: linear-gradient(135deg, var(--text-color) 0%, #3b82f6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hub-theme .header-block h1 { background: linear-gradient(135deg, var(--text-color) 0%, #f43f5e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .header-block p { font-size: 1.15rem; opacity: 0.7; max-width: 650px; margin: 0 auto; line-height: 1.6; }
 
         /* --- How to Use Workflow --- */
         .how-to-use {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
-            margin-bottom: 4rem;
-            background: rgba(128, 128, 128, 0.05);
-            padding: 2.5rem 2rem;
-            border-radius: 16px;
-            border: 1px solid rgba(128, 128, 128, 0.15);
-            animation: fadeInUp 0.5s ease forwards;
+            margin-bottom: 5rem;
+            background: linear-gradient(180deg, rgba(128, 128, 128, 0.03) 0%, rgba(128, 128, 128, 0.08) 100%);
+            padding: 2.5rem;
+            border-radius: var(--card-radius);
+            border: 1px solid var(--card-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .how-to-use::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
         }
         
         @media (max-width: 768px) {
-            .how-to-use { grid-template-columns: 1fr; gap: 2rem; padding: 1.5rem; }
-            .nav-container { padding: 1rem; }
+            .nav-top-row { display: flex; flex-direction: row; gap: 1rem; justify-content: space-between; }
+            .nav-logo { font-size: 1.2rem; }
+            .how-to-use { grid-template-columns: 1fr; gap: 2.5rem; padding: 2rem 1.5rem; }
             .role-toggle { border-radius: 12px; }
             .toggle-btn { white-space: nowrap; flex: 1 1 45%; text-align: center; border-radius: 8px;}
+            .step-container::after { display: none; }
         }
 
-        .step-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            position: relative;
+        .step-container { display: flex; flex-direction: column; align-items: flex-start; text-align: left; position: relative; padding-right: 1rem; }
+
+        .step-container:not(:last-child)::after {
+            content: ''; position: absolute; top: 20px; left: 55px; right: 0; height: 1px;
+            background: rgba(128, 128, 128, 0.3); border-style: dashed; border-width: 1px; border-color: rgba(128,128,128,0.3) transparent transparent transparent;
         }
 
         .step-number {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            margin-bottom: 1.2rem;
-            color: white;
-            font-size: 1.2rem;
-            transition: var(--transition);
+            width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; margin-bottom: 1.25rem; color: white; font-size: 1rem; transition: var(--transition);
         }
 
-        /* Dynamic Step Number Colors */
-        .ba-theme .step-number { background: var(--primary-ba); box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); }
-        .pm-theme .step-number { background: var(--primary-pm); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
-        .arch-theme .step-number { background: var(--primary-arch); color: #000; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
-        .dev-theme .step-number { background: var(--primary-dev); color: #000; box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3); }
-        .qa-theme .step-number { background: var(--primary-qa); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+        .ba-theme .step-number { background: var(--primary-ba); box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2); }
+        .pm-theme .step-number { background: var(--primary-pm); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2); }
+        .arch-theme .step-number { background: var(--primary-arch); color: #000; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2); }
+        .dev-theme .step-number { background: var(--primary-dev); color: #000; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2); }
+        .qa-theme .step-number { background: var(--primary-qa); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2); }
+        .hub-theme .step-number { background: var(--primary-hub); box-shadow: 0 4px 15px rgba(244, 63, 94, 0.2); }
 
-        .step-head { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
-        .step-sub { font-size: 0.9rem; opacity: 0.8; line-height: 1.5; }
+        .step-head { font-weight: 600; font-size: 1.05rem; margin-bottom: 0.5rem; letter-spacing: -0.2px; }
+        .step-sub { font-size: 0.85rem; opacity: 0.7; line-height: 1.5; }
 
         .category-title {
-            font-size: 1.5rem;
-            margin: 3rem 0 1.5rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            border-bottom: 1px solid rgba(128, 128, 128, 0.2);
-            padding-bottom: 0.5rem;
+            font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.1rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.5px; margin: 4rem 0 1.5rem 0; display: flex; align-items: center; gap: 0.75rem; opacity: 0.9;
         }
 
+        .category-title span { font-size: 1.3rem; }
+
         /* --- Card Architecture --- */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
         
         .card {
-            border-radius: 16px;
-            padding: 2rem;
-            border: 1px solid rgba(128, 128, 128, 0.2);
+            border-radius: var(--card-radius);
+            padding: 1.75rem;
+            border: 1px solid var(--card-border);
             display: flex;
             flex-direction: column;
             transition: var(--transition);
             cursor: pointer;
             position: relative;
+            background: var(--card-bg);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
 
-        /* Theme-specific cards */
-        .ba-theme .card { background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
-        .ba-theme .card:hover { border-color: var(--primary-ba); transform: translateY(-8px); box-shadow: 0 15px 30px -5px rgba(124, 58, 237, 0.15); }
+        .ba-theme .card:hover { border-color: var(--primary-ba); transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(124, 58, 237, 0.1); }
+        .pm-theme .card:hover { border-color: var(--primary-pm); transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.1); }
+        .arch-theme .card:hover { border-color: var(--primary-arch); transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(245, 158, 11, 0.1); }
+        .dev-theme .card:hover { border-color: var(--primary-dev); transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(6, 182, 212, 0.1); }
+        .qa-theme .card:hover { border-color: var(--primary-qa); transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.1); }
+        .hub-theme .card:hover { border-color: var(--primary-hub); transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(244, 63, 94, 0.1); }
 
-        .pm-theme .card { background: #1e293b; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .pm-theme .card:hover { border-color: var(--primary-pm); transform: translateY(-8px); box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.2); }
-
-        .arch-theme .card { background: #262626; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .arch-theme .card:hover { border-color: var(--primary-arch); transform: translateY(-8px); box-shadow: 0 15px 30px -5px rgba(245, 158, 11, 0.15); }
-
-        .dev-theme .card { background: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .dev-theme .card:hover { border-color: var(--primary-dev); transform: translateY(-8px); box-shadow: 0 15px 30px -5px rgba(6, 182, 212, 0.15); }
-
-        .qa-theme .card { background: #1e293b; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .qa-theme .card:hover { border-color: var(--primary-qa); transform: translateY(-8px); box-shadow: 0 15px 30px -5px rgba(59, 130, 246, 0.2); }
-
-        .card-icon { font-size: 2.5rem; margin-bottom: 1.2rem; display: inline-block; }
-        .card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.6rem; }
-        .card-desc { font-size: 0.95rem; line-height: 1.6; opacity: 0.8; margin-bottom: 2rem; flex-grow: 1; }
-
-        .card-footer { display: flex; gap: 0.8rem; }
-        .btn-action {
-            flex: 1;
-            padding: 0.8rem;
-            border-radius: 8px;
-            border: 1px solid rgba(128,128,128,0.3);
+        /* Favorites Button on Card */
+        .fav-btn {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
             background: transparent;
-            font-weight: 600;
+            border: none;
+            font-size: 1.4rem;
             cursor: pointer;
-            transition: 0.2s;
-            color: inherit;
+            opacity: 0.15;
+            transition: var(--transition);
+            z-index: 10;
+        }
+        .card:hover .fav-btn { opacity: 0.5; }
+        .fav-btn:hover { transform: scale(1.2); opacity: 1 !important; }
+        .fav-btn.active { opacity: 1; text-shadow: 0 0 10px rgba(245, 158, 11, 0.8); }
+
+        .card-icon-wrapper {
+            width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; margin-bottom: 1.25rem; background: rgba(128, 128, 128, 0.1);
         }
 
-        .ba-theme .btn-action { background: #f8fafc; color: var(--primary-ba); border: none; }
-        .ba-theme .btn-action:hover { background: var(--primary-ba); color: white; }
+        .card-title { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: -0.3px; padding-right: 2rem; }
+        .card-desc { font-size: 0.9rem; line-height: 1.6; opacity: 0.65; margin-bottom: 2rem; flex-grow: 1; }
+
+        .card-footer { display: flex; gap: 0.8rem; margin-top: auto; }
         
-        .pm-theme .btn-action { background: #020617; color: var(--primary-pm); border: 1px solid var(--primary-pm); }
-        .pm-theme .btn-action:hover { background: var(--primary-pm); color: white; }
+        .btn-action {
+            flex: 1; padding: 0.65rem 1rem; border-radius: 8px; border: 1px solid var(--card-border);
+            background: transparent; font-weight: 500; font-size: 0.85rem; cursor: pointer;
+            transition: var(--transition); color: inherit; display: flex; justify-content: center; align-items: center; gap: 0.5rem;
+        }
 
-        .arch-theme .btn-action { background: #171717; color: var(--primary-arch); border: 1px solid var(--primary-arch); }
-        .arch-theme .btn-action:hover { background: var(--primary-arch); color: #000; }
+        .btn-action::after { content: '→'; font-family: monospace; opacity: 0.5; transition: opacity 0.3s, transform 0.3s; }
+        .btn-action:hover::after { opacity: 1; transform: translateX(3px); }
 
-        .dev-theme .btn-action { background: #020617; color: var(--primary-dev); border: 1px solid var(--primary-dev); }
-        .dev-theme .btn-action:hover { background: var(--primary-dev); color: #000; }
-
-        .qa-theme .btn-action { background: #0f172a; color: var(--primary-qa); border: 1px solid var(--primary-qa); }
-        .qa-theme .btn-action:hover { background: var(--primary-qa); color: white; }
+        .ba-theme .btn-action:hover { background: var(--primary-ba); color: white; border-color: var(--primary-ba); }
+        .pm-theme .btn-action:hover { background: var(--primary-pm); color: #000; border-color: var(--primary-pm); }
+        .arch-theme .btn-action:hover { background: var(--primary-arch); color: #000; border-color: var(--primary-arch); }
+        .dev-theme .btn-action:hover { background: var(--primary-dev); color: #000; border-color: var(--primary-dev); }
+        .qa-theme .btn-action:hover { background: var(--primary-qa); color: white; border-color: var(--primary-qa); }
+        .hub-theme .btn-action:hover { background: var(--primary-hub); color: white; border-color: var(--primary-hub); }
 
         /* --- Modal --- */
         .modal-overlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(8px); z-index: 200; align-items: center; justify-content: center;
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 200; align-items: center; justify-content: center;
         }
         .modal-box {
-            background: white; width: 90%; max-width: 650px; padding: 2.5rem; border-radius: 20px;
-            color: #1e293b; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            background: var(--modal-bg); width: 90%; max-width: 600px; padding: 2.5rem; border-radius: 20px;
+            color: var(--text-color); position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            animation: fadeInUp 0.3s ease forwards; border: 1px solid var(--card-border);
         }
-        .pm-theme .modal-box { background: #0f172a; color: white; border: 1px solid var(--primary-pm); }
-        .arch-theme .modal-box { background: #171717; color: white; border: 1px solid var(--primary-arch); }
-        .dev-theme .modal-box { background: #020617; color: white; border: 1px solid var(--primary-dev); }
-        .qa-theme .modal-box { background: #0f172a; color: white; border: 1px solid var(--primary-qa); }
+
+        /* Modal Accents */
+        .ba-theme .modal-box { border-top: 4px solid var(--primary-ba); }
+        .pm-theme .modal-box { border-top: 4px solid var(--primary-pm); }
+        .arch-theme .modal-box { border-top: 4px solid var(--primary-arch); }
+        .dev-theme .modal-box { border-top: 4px solid var(--primary-dev); }
+        .qa-theme .modal-box { border-top: 4px solid var(--primary-qa); }
+        .hub-theme .modal-box { border-top: 4px solid var(--primary-hub); }
+
+        #modal-title { font-weight: 700; letter-spacing: -0.5px; }
 
         .prompt-preview {
-            background: #f1f5f9; padding: 1.5rem; border-radius: 12px; margin: 1.5rem 0;
-            font-family: 'Courier New', Courier, monospace; font-size: 0.95rem; max-height: 350px; overflow-y: auto; line-height: 1.5;
+            background: var(--preview-bg); padding: 1.5rem; border-radius: 12px; margin: 1.5rem 0;
+            font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; max-height: 350px; overflow-y: auto; line-height: 1.6;
+            border: 1px solid var(--card-border);
         }
-        .pm-theme .prompt-preview { background: #1e293b; color: #e2e8f0; border: 1px solid rgba(16,185,129,0.2); }
-        .arch-theme .prompt-preview { background: #262626; color: #e2e8f0; border: 1px solid rgba(245,158,11,0.2); }
-        .dev-theme .prompt-preview { background: #0f172a; color: #e2e8f0; border: 1px solid rgba(6,182,212,0.2); }
-        .qa-theme .prompt-preview { background: #1e293b; color: #e2e8f0; border: 1px solid rgba(59,130,246,0.2); }
 
-        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 1.5rem; cursor: pointer; opacity: 0.5; border: none; background: transparent; color: inherit; }
+        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 1.5rem; cursor: pointer; opacity: 0.4; border: none; background: transparent; color: inherit; transition: opacity 0.2s;}
         .close-btn:hover { opacity: 1; }
+
+        .modal-copy-btn {
+            width: 100%; padding: 1rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 1rem;
+            background: var(--text-color); color: var(--bg-color);
+        }
+
+        /* --- Toast Notification --- */
+        .toast {
+            position: fixed;
+            bottom: -100px;
+            right: 2rem;
+            background: var(--text-color);
+            color: var(--bg-color);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .toast.show { bottom: 2rem; }
+        .ba-theme .toast { border-left: 4px solid var(--primary-ba); }
+        .pm-theme .toast { border-left: 4px solid var(--primary-pm); }
+        .arch-theme .toast { border-left: 4px solid var(--primary-arch); }
+        .dev-theme .toast { border-left: 4px solid var(--primary-dev); }
+        .qa-theme .toast { border-left: 4px solid var(--primary-qa); }
 
         /* --- Filter Bar --- */
         .filter-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 3rem;
-            animation: fadeInUp 0.5s ease forwards;
+            display: flex; justify-content: flex-start; align-items: center; gap: 1rem; margin-bottom: 3rem;
+            animation: fadeInUp 0.5s ease forwards; padding: 1rem; background: var(--input-bg);
+            border-radius: 12px; border: 1px solid var(--card-border);
         }
-        .filter-label { font-weight: 600; font-size: 0.95rem; }
+        .filter-label { font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8; }
         .filter-select {
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            border: 1px solid rgba(128,128,128,0.3);
-            background: rgba(255,255,255,0.05);
-            color: inherit;
-            font-family: inherit;
-            font-size: 0.95rem;
-            cursor: pointer;
-            outline: none;
-            transition: var(--transition);
+            padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--card-border);
+            background: var(--card-bg); color: var(--text-color); font-family: inherit; font-size: 0.9rem;
+            cursor: pointer; outline: none; transition: var(--transition);
         }
-        .ba-theme .filter-select { background: #ffffff; border-color: var(--primary-ba); color: #0f172a; }
-        .ba-theme .filter-select:focus { box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.3); }
-        .qa-theme .filter-select { background: #1e293b; border-color: var(--primary-qa); }
-        .qa-theme .filter-select:focus { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3); }
+        .ba-theme .filter-select:focus { box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2); border-color: var(--primary-ba); }
+        .qa-theme .filter-select:focus { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); border-color: var(--primary-qa); }
         
         .hidden-card { display: none !important; }
 
-        footer { text-align: center; padding: 4rem 0; opacity: 0.5; font-size: 0.85rem; }
+        /* --- Empty State --- */
+        .empty-state { text-align: center; padding: 4rem 2rem; opacity: 0.6; font-style: italic; display: none; }
+
+        /* --- Footer --- */
+        .app-footer {
+            text-align: center; padding: 2.5rem 1.5rem 2rem; display: flex; flex-direction: column;
+            align-items: center; gap: 1rem; border-top: 1px solid var(--card-border); margin-top: 2rem; transition: var(--transition);
+        }
+        .ba-theme .app-footer { background-color: rgba(124, 58, 237, 0.02); }
+        .pm-theme .app-footer { background-color: rgba(16, 185, 129, 0.02); }
+        .arch-theme .app-footer { background-color: rgba(245, 158, 11, 0.02); }
+        .dev-theme .app-footer { background-color: rgba(6, 182, 212, 0.02); }
+        .qa-theme .app-footer { background-color: rgba(59, 130, 246, 0.02); }
+        .hub-theme .app-footer { background-color: rgba(244, 63, 94, 0.02); }
+
+        .footer-logo { display: flex; align-items: center; gap: 0.6rem; font-weight: 700; font-size: 1.1rem; opacity: 0.9; }
+        .ba-theme .footer-logo svg { stroke: var(--primary-ba); }
+        .pm-theme .footer-logo svg { stroke: var(--primary-pm); }
+        .arch-theme .footer-logo svg { stroke: var(--primary-arch); }
+        .dev-theme .footer-logo svg { stroke: var(--primary-dev); }
+        .qa-theme .footer-logo svg { stroke: var(--primary-qa); }
+        .hub-theme .footer-logo svg { stroke: var(--primary-hub); }
+
+        .footer-copy { font-size: 0.8rem; opacity: 0.6; letter-spacing: 1px; text-transform: uppercase; }
     </style>
 </head>
 <body class="ba-theme">
 
     <nav class="nav-container">
-        <div class="nav-logo">Engineer's<span>Toolkit</span></div>
+        <div class="nav-top-row">
+            <div><!-- Empty spacer for grid alignment --></div>
+            <div class="nav-logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="logo-icon">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                ENGINEER'S <span>TOOLKIT</span>
+            </div>
+            
+            <div class="nav-controls">
+                <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">🌓</button>
+            </div>
+        </div>
+
+        <div class="nav-search-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="global-search" class="search-bar" placeholder="Search prompts..." onkeyup="handleSearch()">
+        </div>
+
         <div class="role-toggle">
             <button id="btn-ba" class="toggle-btn" onclick="setRole('ba')">BUSINESS ANALYST</button>
             <button id="btn-pm" class="toggle-btn" onclick="setRole('pm')">PROJECT MANAGER</button>
             <button id="btn-arch" class="toggle-btn" onclick="setRole('arch')">ARCHITECT</button>
             <button id="btn-dev" class="toggle-btn" onclick="setRole('dev')">DEVELOPER</button>
-            <button id="btn-qa" class="toggle-btn" onclick="setRole('qa')">QUALITY ASSURANCE</button>
+            <button id="btn-qa" class="toggle-btn" onclick="setRole('qa')">TESTER</button>
+            <button id="btn-hub" class="toggle-btn" onclick="setRole('hub')">⭐ MY HUB</button>
         </div>
     </nav>
 
     <div class="content-wrap">
         
-        <!-- How To Use Instructions (Global) -->
-        <div class="how-to-use">
+        <!-- How To Use Instructions (Global, hidden in Hub & Search) -->
+        <div class="how-to-use" id="how-to-use">
             <div class="step-container">
                 <div class="step-number">1</div>
                 <div class="step-head">Find Task</div>
@@ -334,6 +533,22 @@
             </div>
         </div>
 
+        <!-- MY HUB VIEW (Favorites) -->
+        <section id="view-hub" class="view-section">
+            <div class="header-block">
+                <h1>My Hub</h1>
+                <p>Quick access to your saved favorites and recently used prompts.</p>
+            </div>
+
+            <h2 class="category-title"><span>⭐</span> Saved Favorites</h2>
+            <div class="grid" id="grid-favorites"></div>
+            <div class="empty-state" id="empty-favorites">You haven't favorited any prompts yet. Click the star icon on any card to save it here!</div>
+
+            <h2 class="category-title"><span>🕰️</span> Recently Used</h2>
+            <div class="grid" id="grid-recents"></div>
+            <div class="empty-state" id="empty-recents">Your recently copied prompts will appear here automatically.</div>
+        </section>
+
         <!-- BA VIEW -->
         <section id="view-ba" class="view-section active">
             <div class="header-block">
@@ -344,38 +559,38 @@
             <h2 class="category-title"><span>📝</span> Requirements Core</h2>
             <div class="grid">
                 <div class="card" data-tech="general salesforce servicenow api data-bi" onclick="openPrompt('User Story Writer', 'ba-story')">
-                    <div class="card-icon">📖</div>
+                    <div class="card-icon-wrapper">📖</div>
                     <div class="card-title">User Story Writer</div>
                     <div class="card-desc">Convert features into INVEST-compliant stories with Acceptance Criteria.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="general salesforce servicenow" onclick="openPrompt('Gap Analysis', 'ba-gap')">
-                    <div class="card-icon">🌉</div>
+                    <div class="card-icon-wrapper">🌉</div>
                     <div class="card-title">Gap Analysis</div>
                     <div class="card-desc">Identify missing requirements between 'As-Is' state and 'To-Be' vision.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="general" onclick="openPrompt('Use Case Builder', 'ba-usecase')">
-                    <div class="card-icon">🗺️</div>
+                    <div class="card-icon-wrapper">🗺️</div>
                     <div class="card-title">Use Case Builder</div>
                     <div class="card-desc">Draft detailed Use Cases with actors, preconditions, and alternate flows.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="general" onclick="openPrompt('AC Generator', 'ba-ac')">
-                    <div class="card-icon">✅</div>
+                    <div class="card-icon-wrapper">✅</div>
                     <div class="card-title">AC Generator</div>
                     <div class="card-desc">Generate strict Given/When/Then acceptance criteria for stories.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <!-- Specific Tech BA Cards -->
                 <div class="card" data-tech="salesforce" onclick="openPrompt('Salesforce Requirements', 'ba-sf')">
-                    <div class="card-icon">☁️</div>
+                    <div class="card-icon-wrapper">☁️</div>
                     <div class="card-title">Salesforce Requirements</div>
                     <div class="card-desc">Gather requirements specific to standard/custom objects and flows.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="servicenow" onclick="openPrompt('ServiceNow Process', 'ba-sn')">
-                    <div class="card-icon">🎫</div>
+                    <div class="card-icon-wrapper">🎫</div>
                     <div class="card-title">ServiceNow Process</div>
                     <div class="card-desc">Map ITSM/CSM workflows, states, and approval routing.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
@@ -385,38 +600,38 @@
             <h2 class="category-title"><span>📊</span> Strategy & Modeling</h2>
             <div class="grid">
                 <div class="card" data-tech="general servicenow salesforce" onclick="openPrompt('Process Modeler', 'ba-flow')">
-                    <div class="card-icon">🔄</div>
+                    <div class="card-icon-wrapper">🔄</div>
                     <div class="card-title">Process Modeler</div>
                     <div class="card-desc">Generate Mermaid JS syntax to visualize complex business process flows.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="general data-bi api" onclick="openPrompt('Data Dictionary', 'ba-data')">
-                    <div class="card-icon">📚</div>
+                    <div class="card-icon-wrapper">📚</div>
                     <div class="card-title">Data Dictionary</div>
                     <div class="card-desc">Extract data entities, attributes, and types from requirements text.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="general" onclick="openPrompt('Risk Assessment', 'ba-risk')">
-                    <div class="card-icon">⚠️</div>
+                    <div class="card-icon-wrapper">⚠️</div>
                     <div class="card-title">Risk Assessment</div>
                     <div class="card-desc">Identify project risks, probability, impact, and mitigation strategies.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="general" onclick="openPrompt('Stakeholder Map', 'ba-stake')">
-                    <div class="card-icon">👥</div>
+                    <div class="card-icon-wrapper">👥</div>
                     <div class="card-title">Stakeholder Map</div>
                     <div class="card-desc">Analyze stakeholders by Power/Interest and communication needs.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <!-- Specific Tech BA Cards -->
                 <div class="card" data-tech="api" onclick="openPrompt('API Integration Specs', 'ba-api')">
-                    <div class="card-icon">🔌</div>
+                    <div class="card-icon-wrapper">🔌</div>
                     <div class="card-title">API Integration Specs</div>
                     <div class="card-desc">Define business rules, data mapping, and event triggers for APIs.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="data-bi" onclick="openPrompt('BI Dashboard Specs', 'ba-bi')">
-                    <div class="card-icon">📊</div>
+                    <div class="card-icon-wrapper">📊</div>
                     <div class="card-title">BI Dashboard Specs</div>
                     <div class="card-desc">Define target audience, KPIs, and data drill-down requirements.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
@@ -426,13 +641,13 @@
             <h2 class="category-title"><span>📢</span> Communication</h2>
             <div class="grid">
                 <div class="card" data-tech="general" onclick="openPrompt('Meeting Minutes', 'ba-mins')">
-                    <div class="card-icon">🎙️</div>
+                    <div class="card-icon-wrapper">🎙️</div>
                     <div class="card-title">Meeting Minutes</div>
                     <div class="card-desc">Turn raw notes into professional minutes with Action Items and Decisions.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="general" onclick="openPrompt('Change Request', 'ba-cr')">
-                    <div class="card-icon">📄</div>
+                    <div class="card-icon-wrapper">📄</div>
                     <div class="card-title">Change Request</div>
                     <div class="card-desc">Draft a formal CR including justification, impact analysis, and effort.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
@@ -450,25 +665,25 @@
             <h2 class="category-title"><span>🚀</span> Initiation & Planning</h2>
             <div class="grid">
                 <div class="card" onclick="openPrompt('Project Charter', 'pm-charter')">
-                    <div class="card-icon">📜</div>
+                    <div class="card-icon-wrapper">📜</div>
                     <div class="card-title">Project Charter</div>
                     <div class="card-desc">Define scope, objectives, and high-level milestones instantly.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('WBS Generator', 'pm-wbs')">
-                    <div class="card-icon">🏗️</div>
+                    <div class="card-icon-wrapper">🏗️</div>
                     <div class="card-title">WBS Generator</div>
                     <div class="card-desc">Break down deliverables into actionable tasks and estimates.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Sprint Planner', 'pm-sprint')">
-                    <div class="card-icon">🏃</div>
+                    <div class="card-icon-wrapper">🏃</div>
                     <div class="card-title">Sprint Planner</div>
                     <div class="card-desc">Organize backlog priorities based on capacity and goals.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Resource Matrix', 'pm-resource')">
-                    <div class="card-icon">📅</div>
+                    <div class="card-icon-wrapper">📅</div>
                     <div class="card-title">Resource Matrix</div>
                     <div class="card-desc">Map out roles, timelines, and allocation constraints.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
@@ -478,25 +693,25 @@
             <h2 class="category-title"><span>📈</span> Execution & Monitoring</h2>
             <div class="grid">
                 <div class="card" onclick="openPrompt('Status Report', 'pm-status')">
-                    <div class="card-icon">📊</div>
+                    <div class="card-icon-wrapper">📊</div>
                     <div class="card-title">Executive Status</div>
                     <div class="card-desc">Generate concise updates on accomplishments and blockers.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Risk Register', 'pm-risk')">
-                    <div class="card-icon">🎯</div>
+                    <div class="card-icon-wrapper">🎯</div>
                     <div class="card-title">Risk Register</div>
                     <div class="card-desc">Document threats, impacts, and mitigation workflows.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Change Control (CCB)', 'pm-ccb')">
-                    <div class="card-icon">⚖️</div>
+                    <div class="card-icon-wrapper">⚖️</div>
                     <div class="card-title">Change Control</div>
                     <div class="card-desc">Draft impact analyses for scope, timeline, and budget changes.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Retrospective', 'pm-retro')">
-                    <div class="card-icon">🔍</div>
+                    <div class="card-icon-wrapper">🔍</div>
                     <div class="card-title">Retrospective</div>
                     <div class="card-desc">Summarize phase outcomes and actionable improvements.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
@@ -506,13 +721,13 @@
             <h2 class="category-title"><span>🤝</span> Stakeholder Dynamics</h2>
             <div class="grid">
                 <div class="card" onclick="openPrompt('Comms Plan', 'pm-comms')">
-                    <div class="card-icon">📡</div>
+                    <div class="card-icon-wrapper">📡</div>
                     <div class="card-title">Comms Plan</div>
                     <div class="card-desc">Define channels, frequency, and information flow.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Conflict Resolution', 'pm-conflict')">
-                    <div class="card-icon">🤝</div>
+                    <div class="card-icon-wrapper">🤝</div>
                     <div class="card-title">Conflict Resolution</div>
                     <div class="card-desc">Strategies for navigating team and stakeholder disputes.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
@@ -530,25 +745,25 @@
             <h2 class="category-title"><span>🏛️</span> System Design & Architecture</h2>
             <div class="grid">
                 <div class="card" onclick="openPrompt('High-Level Design (HLD)', 'arch-hld')">
-                    <div class="card-icon">📐</div>
+                    <div class="card-icon-wrapper">📐</div>
                     <div class="card-title">High-Level Design (HLD)</div>
                     <div class="card-desc">Generate architecture components, interactions, and Mermaid diagrams.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Microservices Extractor', 'arch-micro')">
-                    <div class="card-icon">🧩</div>
+                    <div class="card-icon-wrapper">🧩</div>
                     <div class="card-title">Microservices Extractor</div>
                     <div class="card-desc">Deconstruct monoliths into domains, boundaries, and APIs.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Database Schema Design', 'arch-db')">
-                    <div class="card-icon">🗄️</div>
+                    <div class="card-icon-wrapper">🗄️</div>
                     <div class="card-title">Database Schema Design</div>
                     <div class="card-desc">Design relational or NoSQL schemas tailored to data access patterns.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Cloud Infra Setup', 'arch-cloud')">
-                    <div class="card-icon">☁️</div>
+                    <div class="card-icon-wrapper">☁️</div>
                     <div class="card-title">Cloud Infra Setup</div>
                     <div class="card-desc">Map AWS/Azure/GCP resources for hosting and deployment.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
@@ -558,19 +773,19 @@
             <h2 class="category-title"><span>🛡️</span> Non-Functional & Security</h2>
             <div class="grid">
                 <div class="card" onclick="openPrompt('Threat Modeling', 'arch-threat')">
-                    <div class="card-icon">🕵️</div>
+                    <div class="card-icon-wrapper">🕵️</div>
                     <div class="card-title">Threat Modeling</div>
                     <div class="card-desc">Apply STRIDE methodology to identify architectural security flaws.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Scalability Assessment', 'arch-scale')">
-                    <div class="card-icon">📈</div>
+                    <div class="card-icon-wrapper">📈</div>
                     <div class="card-title">Scalability Assessment</div>
                     <div class="card-desc">Identify bottlenecks and caching/load balancing strategies.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Disaster Recovery Plan', 'arch-dr')">
-                    <div class="card-icon">🔥</div>
+                    <div class="card-icon-wrapper">🔥</div>
                     <div class="card-title">Disaster Recovery Plan</div>
                     <div class="card-desc">Establish RTO, RPO, and failover architectures.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
@@ -580,19 +795,19 @@
             <h2 class="category-title"><span>⚖️</span> Governance & Review</h2>
             <div class="grid">
                 <div class="card" onclick="openPrompt('ADR Generator', 'arch-adr')">
-                    <div class="card-icon">📝</div>
+                    <div class="card-icon-wrapper">📝</div>
                     <div class="card-title">ADR Generator</div>
                     <div class="card-desc">Draft formal Architecture Decision Records for key tech choices.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Tech Stack Selection', 'arch-stack')">
-                    <div class="card-icon">🛠️</div>
+                    <div class="card-icon-wrapper">🛠️</div>
                     <div class="card-title">Tech Stack Selection</div>
                     <div class="card-desc">Evaluate frameworks vs requirements with pros, cons, and risks.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Code/Arch Review', 'arch-review')">
-                    <div class="card-icon">👀</div>
+                    <div class="card-icon-wrapper">👀</div>
                     <div class="card-title">Code/Arch Review</div>
                     <div class="card-desc">Audit design patterns against SOLID and clean architecture rules.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
@@ -610,25 +825,25 @@
             <h2 class="category-title"><span>💻</span> Code Generation & Logic</h2>
             <div class="grid">
                 <div class="card" onclick="openPrompt('Boilerplate Generator', 'dev-boiler')">
-                    <div class="card-icon">🧱</div>
+                    <div class="card-icon-wrapper">🧱</div>
                     <div class="card-title">Boilerplate Generator</div>
                     <div class="card-desc">Create framework-specific skeletons, models, and controllers.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Complex Logic Builder', 'dev-logic')">
-                    <div class="card-icon">🧠</div>
+                    <div class="card-icon-wrapper">🧠</div>
                     <div class="card-title">Complex Logic Builder</div>
                     <div class="card-desc">Implement algorithms, data transformations, and state machines.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Regex Wizard', 'dev-regex')">
-                    <div class="card-icon">🪄</div>
+                    <div class="card-icon-wrapper">🪄</div>
                     <div class="card-title">Regex Wizard</div>
                     <div class="card-desc">Generate and explain complex Regular Expressions for validation.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('SQL Optimizer', 'dev-sql')">
-                    <div class="card-icon">🐬</div>
+                    <div class="card-icon-wrapper">🐬</div>
                     <div class="card-title">SQL Optimizer</div>
                     <div class="card-desc">Refactor slow queries, add indexes, and improve execution plans.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
@@ -638,19 +853,19 @@
             <h2 class="category-title"><span>🔧</span> Refactoring & Debugging</h2>
             <div class="grid">
                 <div class="card" onclick="openPrompt('Code Refactor & Clean', 'dev-refactor')">
-                    <div class="card-icon">✨</div>
+                    <div class="card-icon-wrapper">✨</div>
                     <div class="card-title">Code Refactor</div>
                     <div class="card-desc">Apply SOLID principles and reduce cyclomatic complexity.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Bug Hunter', 'dev-bug')">
-                    <div class="card-icon">🐛</div>
+                    <div class="card-icon-wrapper">🐛</div>
                     <div class="card-title">Bug Hunter</div>
                     <div class="card-desc">Analyze stack traces, logs, and code to find root causes.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('Legacy Code Explainer', 'dev-legacy')">
-                    <div class="card-icon">🕸️</div>
+                    <div class="card-icon-wrapper">🕸️</div>
                     <div class="card-title">Legacy Explainer</div>
                     <div class="card-desc">Translate undocumented, spaghetti code into plain English.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
@@ -660,19 +875,19 @@
             <h2 class="category-title"><span>🧪</span> Testing & Documentation</h2>
             <div class="grid">
                 <div class="card" onclick="openPrompt('Unit Test Generator', 'dev-unit')">
-                    <div class="card-icon">🎯</div>
+                    <div class="card-icon-wrapper">🎯</div>
                     <div class="card-title">Unit Test Generator</div>
                     <div class="card-desc">Write comprehensive Jest, JUnit, or PyTest suites with mocks.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('API Doc Generator', 'dev-apidoc')">
-                    <div class="card-icon">📚</div>
+                    <div class="card-icon-wrapper">📚</div>
                     <div class="card-title">API Doc Generator</div>
                     <div class="card-desc">Generate Swagger/OpenAPI specs from code or JSON payloads.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" onclick="openPrompt('PR / Commit Message', 'dev-pr')">
-                    <div class="card-icon">🚀</div>
+                    <div class="card-icon-wrapper">🚀</div>
                     <div class="card-title">PR Description</div>
                     <div class="card-desc">Draft clear Git commit messages and Pull Request summaries.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
@@ -687,60 +902,47 @@
                 <p>Advanced testing strategies, destructive analysis, and automation frameworks.</p>
             </div>
 
-            <div class="filter-container">
-                <span class="filter-label">Filter by Tech Stack:</span>
-                <select class="filter-select" onchange="filterQaCards(this.value)">
-                    <option value="all">All Technologies</option>
-                    <option value="salesforce">Salesforce</option>
-                    <option value="servicenow">ServiceNow</option>
-                    <option value="api">API Integration</option>
-                    <option value="webui">Web UI (Cypress/Playwright)</option>
-                    <option value="mobile">Mobile (Appium/Native)</option>
-                    <option value="db-etl">Database & ETL</option>
-                </select>
-            </div>
-
             <h2 class="category-title"><span>⚡</span> Functional Testing</h2>
             <div class="grid">
                 <div class="card" data-tech="general webui mobile" onclick="openPrompt('Happy Path Architect', 'qa-happy')">
-                    <div class="card-icon">🛣️</div>
+                    <div class="card-icon-wrapper">🛣️</div>
                     <div class="card-title">Happy Path Architect</div>
                     <div class="card-desc">Map out critical user journeys and success states.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="api general webui db-etl" onclick="openPrompt('Integration & E2E', 'qa-integ')">
-                    <div class="card-icon">🔗</div>
+                    <div class="card-icon-wrapper">🔗</div>
                     <div class="card-title">Integration & E2E</div>
                     <div class="card-desc">Validate end-to-end data flow across APIs.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="general webui mobile api" onclick="openPrompt('Negative Scenarios', 'qa-neg')">
-                    <div class="card-icon">🛑</div>
+                    <div class="card-icon-wrapper">🛑</div>
                     <div class="card-title">Negative Scenarios</div>
                     <div class="card-desc">Generate validation errors and timeout checks.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="general webui mobile api" onclick="openPrompt('Edge Case Destructor', 'qa-edge')">
-                    <div class="card-icon">💣</div>
+                    <div class="card-icon-wrapper">💣</div>
                     <div class="card-title">Edge Case Destructor</div>
                     <div class="card-desc">Brainstorm boundary values and logical gaps.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <!-- Platform Specific Cards -->
                 <div class="card" data-tech="salesforce" onclick="openPrompt('Salesforce Flow Tester', 'qa-sf-flow')">
-                    <div class="card-icon">☁️</div>
+                    <div class="card-icon-wrapper">☁️</div>
                     <div class="card-title">Salesforce Flow Tester</div>
                     <div class="card-desc">Validate complex Flow logic, triggers, and DML operations.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="servicenow" onclick="openPrompt('ServiceNow ITSM Validator', 'qa-sn-itsm')">
-                    <div class="card-icon">🎫</div>
+                    <div class="card-icon-wrapper">🎫</div>
                     <div class="card-title">ServiceNow ITSM Validator</div>
                     <div class="card-desc">Generate test cases for incident and change state lifecycles.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="mobile" onclick="openPrompt('Mobile App Tester', 'qa-mobile')">
-                    <div class="card-icon">📲</div>
+                    <div class="card-icon-wrapper">📲</div>
                     <div class="card-title">Mobile App Tester</div>
                     <div class="card-desc">Generate test scenarios for OS interruptions, gestures, and permissions.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
@@ -750,32 +952,32 @@
             <h2 class="category-title"><span>🤖</span> Automation & Data</h2>
             <div class="grid">
                 <div class="card" data-tech="general webui mobile api" onclick="openPrompt('BDD / Gherkin', 'qa-bdd')">
-                    <div class="card-icon">🥒</div>
+                    <div class="card-icon-wrapper">🥒</div>
                     <div class="card-title">BDD / Gherkin</div>
                     <div class="card-desc">Convert requirements into strict Gherkin syntax.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="general db-etl api" onclick="openPrompt('Test Data Matrix', 'qa-data')">
-                    <div class="card-icon">📝</div>
+                    <div class="card-icon-wrapper">📝</div>
                     <div class="card-title">Test Data Matrix</div>
                     <div class="card-desc">Generate validation tables with test data examples.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <!-- Platform Specific Cards -->
                 <div class="card" data-tech="api" onclick="openPrompt('API Contract Tester', 'qa-api-contract')">
-                    <div class="card-icon">🔌</div>
+                    <div class="card-icon-wrapper">🔌</div>
                     <div class="card-title">API Contract Tester</div>
                     <div class="card-desc">Design Postman/RestAssured strategies from JSON schemas.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="webui" onclick="openPrompt('Web UI Automation', 'qa-webui')">
-                    <div class="card-icon">🌐</div>
+                    <div class="card-icon-wrapper">🌐</div>
                     <div class="card-title">Web UI Automation</div>
                     <div class="card-desc">Design Cypress or Playwright framework strategies and assertions.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="db-etl" onclick="openPrompt('ETL Data Validator', 'qa-db-etl')">
-                    <div class="card-icon">🗄️</div>
+                    <div class="card-icon-wrapper">🗄️</div>
                     <div class="card-title">ETL Data Validator</div>
                     <div class="card-desc">Write SQL validation queries for data pipelines and migrations.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
@@ -785,37 +987,50 @@
             <h2 class="category-title"><span>🛡️</span> Non-Functional (NFR)</h2>
             <div class="grid">
                 <div class="card" data-tech="api general webui db-etl" onclick="openPrompt('Security Auditor', 'qa-sec')">
-                    <div class="card-icon">🔒</div>
+                    <div class="card-icon-wrapper">🔒</div>
                     <div class="card-title">Security Auditor</div>
                     <div class="card-desc">Analyze for vulnerabilities like IDOR and XSS.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="api general webui db-etl" onclick="openPrompt('Performance & Load', 'qa-perf')">
-                    <div class="card-icon">⚡</div>
+                    <div class="card-icon-wrapper">⚡</div>
                     <div class="card-title">Performance & Load</div>
                     <div class="card-desc">Identify bottlenecks and define SLAs.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="general webui mobile" onclick="openPrompt('Accessibility (a11y)', 'qa-a11y')">
-                    <div class="card-icon">♿</div>
+                    <div class="card-icon-wrapper">♿</div>
                     <div class="card-title">Accessibility (a11y)</div>
                     <div class="card-desc">Review against WCAG 2.1 AA standards.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
                 <div class="card" data-tech="general webui mobile" onclick="openPrompt('Compatibility Matrix', 'qa-comp')">
-                    <div class="card-icon">📱</div>
+                    <div class="card-icon-wrapper">📱</div>
                     <div class="card-title">Compatibility Matrix</div>
                     <div class="card-desc">Risk-based list of devices and OS versions.</div>
                     <div class="card-footer"><button class="btn-action">View Prompt</button></div>
                 </div>
             </div>
         </section>
+    </div> <!-- END content-wrap -->
 
-        <footer>
-            <div style="margin-bottom: 0.5rem;">Built by Ashish Kumar Sankhua &bull; Integrated Engineering Hub</div>
-            <div>&copy; 2026 All Rights Reserved.</div>
-        </footer>
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        Prompt Copied to Clipboard!
     </div>
+
+    <footer class="app-footer">
+        <div class="footer-logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            <span>Engineer's Toolkit</span>
+        </div>
+        <div class="footer-copy">&copy; 2026 ASHISH KUMAR SANKHUA. ALL RIGHTS RESERVED.</div>
+    </footer>
 
     <!-- Modal Layout -->
     <div id="modal-overlay" class="modal-overlay" onclick="closeModal()">
@@ -823,7 +1038,9 @@
             <button class="close-btn" onclick="closeModal()">&times;</button>
             <h2 id="modal-title" style="margin:0 0 0.5rem 0;">Prompt</h2>
             <div id="modal-body" class="prompt-preview"></div>
-            <button id="modal-copy-btn" class="btn-action" style="width:100%; padding: 1rem; background: #0f172a; color: white; border: none; border-radius: 8px;" onclick="copyCurrentPrompt()">Copy to Clipboard</button>
+            <!-- Store the active ID secretly to track recents -->
+            <input type="hidden" id="modal-active-id" value="">
+            <button id="modal-copy-btn" class="modal-copy-btn" onclick="copyCurrentPrompt()">Copy to Clipboard</button>
         </div>
     </div>
 
@@ -1297,6 +1514,104 @@ After I answer all 4, generate an ETL Validation Plan including SQL queries for 
     </div>
 
     <script>
+        // State Arrays
+        let favorites = JSON.parse(localStorage.getItem('et_favorites')) || [];
+        let recents = JSON.parse(localStorage.getItem('et_recents')) || [];
+
+        // App Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check Theme
+            if (localStorage.getItem('et_dark_mode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+
+            // Inject Data IDs and Favorite Buttons into every card
+            document.querySelectorAll('.card').forEach(card => {
+                const clickAttr = card.getAttribute('onclick');
+                if (clickAttr) {
+                    const match = clickAttr.match(/'([^']+)'\)$/); // Extrapolates ID from openPrompt(.., 'id')
+                    if (match) {
+                        const id = match[1];
+                        card.setAttribute('data-id', id);
+                        
+                        // Check if favorite
+                        const isFav = favorites.includes(id);
+                        
+                        // Add Favorite Button
+                        card.insertAdjacentHTML('afterbegin', 
+                            `<button class="fav-btn ${isFav ? 'active' : ''}" aria-label="Favorite" title="Add to Favorites" onclick="toggleFavorite(event, '${id}')">⭐</button>`
+                        );
+                    }
+                }
+            });
+        });
+
+        // Theme Toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('et_dark_mode', document.body.classList.contains('dark-mode'));
+        }
+
+        // Global Search
+        function handleSearch() {
+            const query = document.getElementById('global-search').value.toLowerCase();
+            const howToUse = document.getElementById('how-to-use');
+            
+            if (query.trim().length > 0) {
+                howToUse.style.display = 'none'; // Hide instructions while searching
+                
+                document.querySelectorAll('.view-section:not(#view-hub)').forEach(section => {
+                    let hasVisibleCard = false;
+                    section.querySelectorAll('.card').forEach(card => {
+                        const text = card.innerText.toLowerCase();
+                        if(text.includes(query)) {
+                            card.style.display = 'flex';
+                            hasVisibleCard = true;
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                    // Show entire section if it contains matches
+                    section.style.display = hasVisibleCard ? 'block' : 'none';
+                    // Hide category titles during search for cleaner look
+                    section.querySelectorAll('.category-title, .filter-container').forEach(el => el.style.display = 'none');
+                });
+            } else {
+                // Reset to normal when search is cleared safely extracting the active role
+                let activeRole = 'ba';
+                ['ba', 'pm', 'arch', 'dev', 'qa', 'hub'].forEach(r => {
+                    if (document.body.classList.contains(r + '-theme')) activeRole = r;
+                });
+                setRole(activeRole);
+            }
+        }
+
+        // Favorites Logic
+        function toggleFavorite(event, id) {
+            event.stopPropagation(); // prevent modal opening
+            const btn = event.currentTarget;
+            
+            if (favorites.includes(id)) {
+                favorites = favorites.filter(f => f !== id);
+                btn.classList.remove('active');
+            } else {
+                favorites.push(id);
+                btn.classList.add('active');
+            }
+            localStorage.setItem('et_favorites', JSON.stringify(favorites));
+
+            // Sync all identical fav buttons across the DOM (in case of Hub clones)
+            document.querySelectorAll(`.card[data-id="${id}"] .fav-btn`).forEach(b => {
+                if(favorites.includes(id)) b.classList.add('active');
+                else b.classList.remove('active');
+            });
+
+            // Re-render Hub if we are on it
+            if (document.body.classList.contains('hub-theme')) {
+                renderHub();
+            }
+        }
+
         // State Management
         function setRole(role) {
             const body = document.body;
@@ -1305,51 +1620,100 @@ After I answer all 4, generate an ETL Validation Plan including SQL queries for 
                 'pm': document.getElementById('view-pm'),
                 'arch': document.getElementById('view-arch'),
                 'dev': document.getElementById('view-dev'),
-                'qa': document.getElementById('view-qa')
+                'qa': document.getElementById('view-qa'),
+                'hub': document.getElementById('view-hub')
             };
+
+            // Clear Search Box
+            document.getElementById('global-search').value = '';
+            
+            // CRITICAL FIX: Reset all inline styles that may have been altered by the search function
+            document.querySelectorAll('.view-section').forEach(sec => sec.style.display = '');
+            document.querySelectorAll('.card').forEach(c => c.style.display = 'flex');
+            document.querySelectorAll('.category-title, .filter-container').forEach(el => el.style.display = '');
 
             // Apply Theme
             body.className = role + '-theme';
+            if (localStorage.getItem('et_dark_mode') === 'true') body.classList.add('dark-mode');
+
+            // Manage Instructions visibility
+            document.getElementById('how-to-use').style.display = (role === 'hub') ? 'none' : 'grid';
 
             // Toggle Views
             for (let key in views) {
-                if(views[key]) {
-                    views[key].classList.remove('active');
-                }
+                if(views[key]) views[key].classList.remove('active');
             }
-            if (views[role]) {
-                views[role].classList.add('active');
+            if (views[role]) views[role].classList.add('active');
+
+            // Render Hub dynamically
+            if (role === 'hub') renderHub();
+        }
+
+        function renderHub() {
+            const favGrid = document.getElementById('grid-favorites');
+            const recGrid = document.getElementById('grid-recents');
+            
+            favGrid.innerHTML = '';
+            recGrid.innerHTML = '';
+
+            // Master Map of all unique cards
+            const cardMap = {};
+            document.querySelectorAll('.view-section:not(#view-hub) .card').forEach(c => {
+                cardMap[c.getAttribute('data-id')] = c;
+            });
+
+            // Populate Favorites
+            if (favorites.length === 0) {
+                document.getElementById('empty-favorites').style.display = 'block';
+            } else {
+                document.getElementById('empty-favorites').style.display = 'none';
+                favorites.forEach(id => {
+                    if(cardMap[id]) favGrid.appendChild(cloneCardForHub(cardMap[id]));
+                });
             }
+
+            // Populate Recents
+            if (recents.length === 0) {
+                document.getElementById('empty-recents').style.display = 'block';
+            } else {
+                document.getElementById('empty-recents').style.display = 'none';
+                recents.forEach(id => {
+                    if(cardMap[id]) recGrid.appendChild(cloneCardForHub(cardMap[id]));
+                });
+            }
+        }
+
+        // Helper to safely clone cards without cloning display:none states from searches
+        function cloneCardForHub(originalCard) {
+            let clone = originalCard.cloneNode(true);
+            clone.style.display = 'flex'; // guarantee visible
+            clone.style.order = '0'; // guarantee unsorted
+            return clone;
         }
 
         // Modal Controls
         function openPrompt(title, textId) {
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-body').innerText = document.getElementById(textId).value;
+            document.getElementById('modal-active-id').value = textId;
             document.getElementById('modal-overlay').style.display = 'flex';
-            
-            // Reset button text just in case
-            const copyBtn = document.getElementById('modal-copy-btn');
-            copyBtn.innerText = 'Copy to Clipboard';
-            
-            // Set neutral button styling based on theme
-            if (document.body.classList.contains('ba-theme') || document.body.classList.contains('pm-theme') || document.body.classList.contains('qa-theme')) {
-                copyBtn.style.background = '#0f172a';
-                copyBtn.style.color = 'white';
-            } else {
-                copyBtn.style.background = '#1e293b'; 
-                copyBtn.style.color = 'white';
-            }
         }
 
         function closeModal() {
             document.getElementById('modal-overlay').style.display = 'none';
         }
 
+        // Toast Notification
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
         // Copy functionality using reliable document.execCommand for embedded iframes/canvas
         function copyCurrentPrompt() {
             const textToCopy = document.getElementById('modal-body').innerText;
-            const copyBtn = document.getElementById('modal-copy-btn');
+            const activeId = document.getElementById('modal-active-id').value;
 
             // Create temporary textarea for copying
             const textArea = document.createElement("textarea");
@@ -1367,34 +1731,29 @@ After I answer all 4, generate an ETL Validation Plan including SQL queries for 
             try {
                 const successful = document.execCommand('copy');
                 if (successful) {
-                    let btnColor = '#7c3aed'; // Default BA Purple
-                    let textColor = 'white';
-                    
-                    if (document.body.classList.contains('qa-theme')) { btnColor = '#3b82f6'; }
-                    else if (document.body.classList.contains('pm-theme')) { btnColor = '#10b981'; }
-                    else if (document.body.classList.contains('arch-theme')) { btnColor = '#f59e0b'; textColor = '#000'; }
-                    else if (document.body.classList.contains('dev-theme')) { btnColor = '#06b6d4'; textColor = '#000'; }
-                    
-                    copyBtn.innerText = '✓ Copied Successfully';
-                    copyBtn.style.background = btnColor;
-                    copyBtn.style.color = textColor;
+                    showToast();
+                    closeModal();
+
+                    // Add to Recents
+                    if (activeId) {
+                        recents = recents.filter(r => r !== activeId); // Remove if exists
+                        recents.unshift(activeId); // Add to front
+                        if (recents.length > 6) recents.pop(); // Keep only last 6
+                        localStorage.setItem('et_recents', JSON.stringify(recents));
+                        
+                        // If we are currently in the hub, re-render to show it instantly
+                        if(document.body.classList.contains('hub-theme')) renderHub();
+                    }
                 }
             } catch (err) {
                 console.error('Fallback: Oops, unable to copy', err);
-                copyBtn.innerText = 'Error Copying';
+                alert("Failed to copy. Please manually copy the text.");
             }
 
             document.body.removeChild(textArea);
-
-            // Reset after 2 seconds
-            setTimeout(() => {
-                copyBtn.innerText = 'Copy to Clipboard';
-                copyBtn.style.background = (document.body.classList.contains('arch-theme') || document.body.classList.contains('dev-theme')) ? '#1e293b' : '#0f172a';
-                copyBtn.style.color = 'white';
-            }, 2000);
         }
 
-        // Filter Logic for QA Tech Stack
+        // Filter Logic for QA Tech Stack (isolated to QA view)
         function filterQaCards(tech) {
             const qaSection = document.getElementById('view-qa');
             const grids = qaSection.querySelectorAll('.grid');
