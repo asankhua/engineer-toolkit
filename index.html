@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineering Toolkit | Full Lifecycle Hub</title>
+    <style>
+        :root {
+            /* Shared Palette */
+            --primary-ba: #7c3aed; /* Purple */
+            --primary-pm: #10b981; /* Emerald */
+            --primary-arch: #f59e0b; /* Amber */
+            --primary-dev: #06b6d4; /* Cyan */
+            --primary-qa: #3b82f6; /* Blue */
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* --- Dynamic Theme States --- */
+        body.ba-theme { background-color: #f8fafc; color: #0f172a; }
+        body.pm-theme { background-color: #0f172a; color: #f8fafc; }
+        body.arch-theme { background-color: #171717; color: #f8fafc; }
+        body.dev-theme { background-color: #020617; color: #f8fafc; }
+        body.qa-theme { background-color: #09090b; color: #f8fafc; }
+
+        /* --- Navigation Switcher --- */
+        .nav-container {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1.2rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.01);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+        }
+
+        .nav-logo {
+            font-weight: 800;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .nav-logo span {
+            transition: var(--transition);
+            margin-left: 0.3rem;
+        }
+
+        .ba-theme .nav-logo span { color: var(--primary-ba); }
+        .pm-theme .nav-logo span { color: var(--primary-pm); }
+        .arch-theme .nav-logo span { color: var(--primary-arch); }
+        .dev-theme .nav-logo span { color: var(--primary-dev); }
+        .qa-theme .nav-logo span { color: var(--primary-qa); }
+
+        .role-toggle {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: rgba(128, 128, 128, 0.15);
+            padding: 4px;
+            border-radius: 50px;
+            gap: 4px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .toggle-btn {
+            padding: 0.7rem 1.4rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            color: #64748b;
+            background: transparent;
+        }
+
+        .ba-theme .role-toggle { background: #e2e8f0; } /* Lighter toggle for light mode */
+
+        /* Active Button States */
+        .ba-theme #btn-ba { background: var(--primary-ba); color: white; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); }
+        .pm-theme #btn-pm { background: var(--primary-pm); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+        .arch-theme #btn-arch { background: var(--primary-arch); color: #000; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
+        .dev-theme #btn-dev { background: var(--primary-dev); color: #000; box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3); }
+        .qa-theme #btn-qa { background: var(--primary-qa); color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+
+        /* --- Main Layout --- */
+        .content-wrap { max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem; }
+        .view-section { display: none; animation: fadeInUp 0.5s ease forwards; }
+        .view-section.active { display: block; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-block { text-align: center; margin-bottom: 4rem; }
+        .header-block h1 { font-size: 3rem; margin-bottom: 0.5rem; letter-spacing: -1px; }
+        .header-block p { font-size: 1.1rem; opacity: 0.8; }
+
+        /* --- How to Use Workflow --- */
+        .how-to-use {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+            background: rgba(128, 128, 128, 0.05);
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(128, 128, 128, 0.15);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        
+        @media (max-width: 768px) {
+            .how-to-use { grid-template-columns: 1fr; gap: 2rem; padding: 1.5rem; }
+            .nav-container { padding: 1rem; }
+            .role-toggle { border-radius: 12px; }
+            .toggle-btn { white-space: nowrap; flex: 1 1 45%; text-align: center; border-radius: 8px;}
+        }
+
+        .step-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            color: white;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        /* Dynamic Step Number Colors */
+        .ba-theme .step-number { background: var(--primary-ba); box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); }
+        .pm-theme .step-number { background: var(--primary-pm); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+        .arch-theme .step-number { background: var(--primary-arch); color: #000; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
+        .dev-theme .step-number { background: var(--primary-dev); color: #000; box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3); }
+        .qa-theme .step-number { background: var(--primary-qa); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+
+        .step-head { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .step-sub { font-size: 0.9rem; opacity: 0.8; line-height: 1.5; }
+
+        .category-title {
+            font-size: 1.5rem;
+            margin: 3rem 0 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+            padding-bottom: 0.5rem;
+        }
+
+        /* --- Card Architecture --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
+        
+        .card {
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(128, 128, 128, 0.2);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+
+        /* Theme-specific cards */
+        .ba-theme .card { background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .ba-theme .card:hover { border-color: var(--primary-ba); transform: translateY(-8px); box-shadow: 0 15px 30px -5px rgba(124, 58, 237, 0.15); }
+
+        .pm-theme .card { background: #1e293b; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .pm-theme .card:hover { border-color: var(--primary-pm); transform: translateY(-8px); box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.2); }
+
+        .arch-theme .card { background: #262626; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .arch-theme .card:hover { border-color: var(--primary-arch); transform: translateY(-8px); box-shadow: 0 15px 30px -5px rgba(245, 158, 11, 0.15); }
+
+        .dev-theme .card { background: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .dev-theme .card:hover { border-color: var(--primary-dev); transform: translateY(-8px); box-shadow: 0 15px 30px -5px rgba(6, 182, 212, 0.15); }
+
+        .qa-theme .card { background: #1e293b; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .qa-theme .card:hover { border-color: var(--primary-qa); transform: translateY(-8px); box-shadow: 0 15px 30px -5px rgba(59, 130, 246, 0.2); }
+
+        .card-icon { font-size: 2.5rem; margin-bottom: 1.2rem; display: inline-block; }
+        .card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.6rem; }
+        .card-desc { font-size: 0.95rem; line-height: 1.6; opacity: 0.8; margin-bottom: 2rem; flex-grow: 1; }
+
+        .card-footer { display: flex; gap: 0.8rem; }
+        .btn-action {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid rgba(128,128,128,0.3);
+            background: transparent;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            color: inherit;
+        }
+
+        .ba-theme .btn-action { background: #f8fafc; color: var(--primary-ba); border: none; }
+        .ba-theme .btn-action:hover { background: var(--primary-ba); color: white; }
+        
+        .pm-theme .btn-action { background: #020617; color: var(--primary-pm); border: 1px solid var(--primary-pm); }
+        .pm-theme .btn-action:hover { background: var(--primary-pm); color: white; }
+
+        .arch-theme .btn-action { background: #171717; color: var(--primary-arch); border: 1px solid var(--primary-arch); }
+        .arch-theme .btn-action:hover { background: var(--primary-arch); color: #000; }
+
+        .dev-theme .btn-action { background: #020617; color: var(--primary-dev); border: 1px solid var(--primary-dev); }
+        .dev-theme .btn-action:hover { background: var(--primary-dev); color: #000; }
+
+        .qa-theme .btn-action { background: #0f172a; color: var(--primary-qa); border: 1px solid var(--primary-qa); }
+        .qa-theme .btn-action:hover { background: var(--primary-qa); color: white; }
+
+        /* --- Modal --- */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px); z-index: 200; align-items: center; justify-content: center;
+        }
+        .modal-box {
+            background: white; width: 90%; max-width: 650px; padding: 2.5rem; border-radius: 20px;
+            color: #1e293b; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+        .pm-theme .modal-box { background: #0f172a; color: white; border: 1px solid var(--primary-pm); }
+        .arch-theme .modal-box { background: #171717; color: white; border: 1px solid var(--primary-arch); }
+        .dev-theme .modal-box { background: #020617; color: white; border: 1px solid var(--primary-dev); }
+        .qa-theme .modal-box { background: #0f172a; color: white; border: 1px solid var(--primary-qa); }
+
+        .prompt-preview {
+            background: #f1f5f9; padding: 1.5rem; border-radius: 12px; margin: 1.5rem 0;
+            font-family: 'Courier New', Courier, monospace; font-size: 0.95rem; max-height: 350px; overflow-y: auto; line-height: 1.5;
+        }
+        .pm-theme .prompt-preview { background: #1e293b; color: #e2e8f0; border: 1px solid rgba(16,185,129,0.2); }
+        .arch-theme .prompt-preview { background: #262626; color: #e2e8f0; border: 1px solid rgba(245,158,11,0.2); }
+        .dev-theme .prompt-preview { background: #0f172a; color: #e2e8f0; border: 1px solid rgba(6,182,212,0.2); }
+        .qa-theme .prompt-preview { background: #1e293b; color: #e2e8f0; border: 1px solid rgba(59,130,246,0.2); }
+
+        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 1.5rem; cursor: pointer; opacity: 0.5; border: none; background: transparent; color: inherit; }
+        .close-btn:hover { opacity: 1; }
+
+        /* --- Filter Bar --- */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        .filter-label { font-weight: 600; font-size: 0.95rem; }
+        .filter-select {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: 1px solid rgba(128,128,128,0.3);
+            background: rgba(255,255,255,0.05);
+            color: inherit;
+            font-family: inherit;
+            font-size: 0.95rem;
+            cursor: pointer;
+            outline: none;
+            transition: var(--transition);
+        }
+        .ba-theme .filter-select { background: #ffffff; border-color: var(--primary-ba); color: #0f172a; }
+        .ba-theme .filter-select:focus { box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.3); }
+        .qa-theme .filter-select { background: #1e293b; border-color: var(--primary-qa); }
+        .qa-theme .filter-select:focus { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3); }
+        
+        .hidden-card { display: none !important; }
+
+        footer { text-align: center; padding: 4rem 0; opacity: 0.5; font-size: 0.85rem; }
+    </style>
+</head>
+<body class="ba-theme">
+
+    <nav class="nav-container">
+        <div class="nav-logo">Engineer's<span>Toolkit</span></div>
+        <div class="role-toggle">
+            <button id="btn-ba" class="toggle-btn" onclick="setRole('ba')">BUSINESS ANALYST</button>
+            <button id="btn-pm" class="toggle-btn" onclick="setRole('pm')">PROJECT MANAGER</button>
+            <button id="btn-arch" class="toggle-btn" onclick="setRole('arch')">ARCHITECT</button>
+            <button id="btn-dev" class="toggle-btn" onclick="setRole('dev')">DEVELOPER</button>
+            <button id="btn-qa" class="toggle-btn" onclick="setRole('qa')">QUALITY ASSURANCE</button>
+        </div>
+    </nav>
+
+    <div class="content-wrap">
+        
+        <!-- How To Use Instructions (Global) -->
+        <div class="how-to-use">
+            <div class="step-container">
+                <div class="step-number">1</div>
+                <div class="step-head">Find Task</div>
+                <div class="step-sub">Search and select the tile that matches your current usecase.</div>
+            </div>
+            <div class="step-container">
+                <div class="step-number">2</div>
+                <div class="step-head">Copy Prompt</div>
+                <div class="step-sub">Click 'View Prompt' and copy the text to your clipboard.</div>
+            </div>
+            <div class="step-container">
+                <div class="step-number">3</div>
+                <div class="step-head">Paste to AI</div>
+                <div class="step-sub">Open Gemini or ChatGPT and paste the prompt to start the session.</div>
+            </div>
+            <div class="step-container">
+                <div class="step-number">4</div>
+                <div class="step-head">Answer Q's</div>
+                <div class="step-sub">The tool will ask you context questions one-by-one. Answer to get results!</div>
+            </div>
+        </div>
+
+        <!-- BA VIEW -->
+        <section id="view-ba" class="view-section active">
+            <div class="header-block">
+                <h1>Business Analyst Toolkit</h1>
+                <p>Master the requirements lifecycle and bridge business strategy with technical execution.</p>
+            </div>
+
+            <h2 class="category-title"><span>📝</span> Requirements Core</h2>
+            <div class="grid">
+                <div class="card" data-tech="general salesforce servicenow api data-bi" onclick="openPrompt('User Story Writer', 'ba-story')">
+                    <div class="card-icon">📖</div>
+                    <div class="card-title">User Story Writer</div>
+                    <div class="card-desc">Convert features into INVEST-compliant stories with Acceptance Criteria.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="general salesforce servicenow" onclick="openPrompt('Gap Analysis', 'ba-gap')">
+                    <div class="card-icon">🌉</div>
+                    <div class="card-title">Gap Analysis</div>
+                    <div class="card-desc">Identify missing requirements between 'As-Is' state and 'To-Be' vision.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="general" onclick="openPrompt('Use Case Builder', 'ba-usecase')">
+                    <div class="card-icon">🗺️</div>
+                    <div class="card-title">Use Case Builder</div>
+                    <div class="card-desc">Draft detailed Use Cases with actors, preconditions, and alternate flows.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="general" onclick="openPrompt('AC Generator', 'ba-ac')">
+                    <div class="card-icon">✅</div>
+                    <div class="card-title">AC Generator</div>
+                    <div class="card-desc">Generate strict Given/When/Then acceptance criteria for stories.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <!-- Specific Tech BA Cards -->
+                <div class="card" data-tech="salesforce" onclick="openPrompt('Salesforce Requirements', 'ba-sf')">
+                    <div class="card-icon">☁️</div>
+                    <div class="card-title">Salesforce Requirements</div>
+                    <div class="card-desc">Gather requirements specific to standard/custom objects and flows.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="servicenow" onclick="openPrompt('ServiceNow Process', 'ba-sn')">
+                    <div class="card-icon">🎫</div>
+                    <div class="card-title">ServiceNow Process</div>
+                    <div class="card-desc">Map ITSM/CSM workflows, states, and approval routing.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+            </div>
+
+            <h2 class="category-title"><span>📊</span> Strategy & Modeling</h2>
+            <div class="grid">
+                <div class="card" data-tech="general servicenow salesforce" onclick="openPrompt('Process Modeler', 'ba-flow')">
+                    <div class="card-icon">🔄</div>
+                    <div class="card-title">Process Modeler</div>
+                    <div class="card-desc">Generate Mermaid JS syntax to visualize complex business process flows.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="general data-bi api" onclick="openPrompt('Data Dictionary', 'ba-data')">
+                    <div class="card-icon">📚</div>
+                    <div class="card-title">Data Dictionary</div>
+                    <div class="card-desc">Extract data entities, attributes, and types from requirements text.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="general" onclick="openPrompt('Risk Assessment', 'ba-risk')">
+                    <div class="card-icon">⚠️</div>
+                    <div class="card-title">Risk Assessment</div>
+                    <div class="card-desc">Identify project risks, probability, impact, and mitigation strategies.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="general" onclick="openPrompt('Stakeholder Map', 'ba-stake')">
+                    <div class="card-icon">👥</div>
+                    <div class="card-title">Stakeholder Map</div>
+                    <div class="card-desc">Analyze stakeholders by Power/Interest and communication needs.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <!-- Specific Tech BA Cards -->
+                <div class="card" data-tech="api" onclick="openPrompt('API Integration Specs', 'ba-api')">
+                    <div class="card-icon">🔌</div>
+                    <div class="card-title">API Integration Specs</div>
+                    <div class="card-desc">Define business rules, data mapping, and event triggers for APIs.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="data-bi" onclick="openPrompt('BI Dashboard Specs', 'ba-bi')">
+                    <div class="card-icon">📊</div>
+                    <div class="card-title">BI Dashboard Specs</div>
+                    <div class="card-desc">Define target audience, KPIs, and data drill-down requirements.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+            </div>
+
+            <h2 class="category-title"><span>📢</span> Communication</h2>
+            <div class="grid">
+                <div class="card" data-tech="general" onclick="openPrompt('Meeting Minutes', 'ba-mins')">
+                    <div class="card-icon">🎙️</div>
+                    <div class="card-title">Meeting Minutes</div>
+                    <div class="card-desc">Turn raw notes into professional minutes with Action Items and Decisions.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="general" onclick="openPrompt('Change Request', 'ba-cr')">
+                    <div class="card-icon">📄</div>
+                    <div class="card-title">Change Request</div>
+                    <div class="card-desc">Draft a formal CR including justification, impact analysis, and effort.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PM VIEW -->
+        <section id="view-pm" class="view-section">
+            <div class="header-block">
+                <h1>Project Manager Toolkit</h1>
+                <p>Streamline planning, master resource allocation, and align stakeholders effectively.</p>
+            </div>
+
+            <h2 class="category-title"><span>🚀</span> Initiation & Planning</h2>
+            <div class="grid">
+                <div class="card" onclick="openPrompt('Project Charter', 'pm-charter')">
+                    <div class="card-icon">📜</div>
+                    <div class="card-title">Project Charter</div>
+                    <div class="card-desc">Define scope, objectives, and high-level milestones instantly.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('WBS Generator', 'pm-wbs')">
+                    <div class="card-icon">🏗️</div>
+                    <div class="card-title">WBS Generator</div>
+                    <div class="card-desc">Break down deliverables into actionable tasks and estimates.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Sprint Planner', 'pm-sprint')">
+                    <div class="card-icon">🏃</div>
+                    <div class="card-title">Sprint Planner</div>
+                    <div class="card-desc">Organize backlog priorities based on capacity and goals.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Resource Matrix', 'pm-resource')">
+                    <div class="card-icon">📅</div>
+                    <div class="card-title">Resource Matrix</div>
+                    <div class="card-desc">Map out roles, timelines, and allocation constraints.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+            </div>
+
+            <h2 class="category-title"><span>📈</span> Execution & Monitoring</h2>
+            <div class="grid">
+                <div class="card" onclick="openPrompt('Status Report', 'pm-status')">
+                    <div class="card-icon">📊</div>
+                    <div class="card-title">Executive Status</div>
+                    <div class="card-desc">Generate concise updates on accomplishments and blockers.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Risk Register', 'pm-risk')">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-title">Risk Register</div>
+                    <div class="card-desc">Document threats, impacts, and mitigation workflows.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Change Control (CCB)', 'pm-ccb')">
+                    <div class="card-icon">⚖️</div>
+                    <div class="card-title">Change Control</div>
+                    <div class="card-desc">Draft impact analyses for scope, timeline, and budget changes.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Retrospective', 'pm-retro')">
+                    <div class="card-icon">🔍</div>
+                    <div class="card-title">Retrospective</div>
+                    <div class="card-desc">Summarize phase outcomes and actionable improvements.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+            </div>
+
+            <h2 class="category-title"><span>🤝</span> Stakeholder Dynamics</h2>
+            <div class="grid">
+                <div class="card" onclick="openPrompt('Comms Plan', 'pm-comms')">
+                    <div class="card-icon">📡</div>
+                    <div class="card-title">Comms Plan</div>
+                    <div class="card-desc">Define channels, frequency, and information flow.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Conflict Resolution', 'pm-conflict')">
+                    <div class="card-icon">🤝</div>
+                    <div class="card-title">Conflict Resolution</div>
+                    <div class="card-desc">Strategies for navigating team and stakeholder disputes.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ARCHITECT VIEW -->
+        <section id="view-arch" class="view-section">
+            <div class="header-block">
+                <h1>Architect Toolkit</h1>
+                <p>Design scalable systems, evaluate tech stacks, and govern technical decisions.</p>
+            </div>
+
+            <h2 class="category-title"><span>🏛️</span> System Design & Architecture</h2>
+            <div class="grid">
+                <div class="card" onclick="openPrompt('High-Level Design (HLD)', 'arch-hld')">
+                    <div class="card-icon">📐</div>
+                    <div class="card-title">High-Level Design (HLD)</div>
+                    <div class="card-desc">Generate architecture components, interactions, and Mermaid diagrams.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Microservices Extractor', 'arch-micro')">
+                    <div class="card-icon">🧩</div>
+                    <div class="card-title">Microservices Extractor</div>
+                    <div class="card-desc">Deconstruct monoliths into domains, boundaries, and APIs.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Database Schema Design', 'arch-db')">
+                    <div class="card-icon">🗄️</div>
+                    <div class="card-title">Database Schema Design</div>
+                    <div class="card-desc">Design relational or NoSQL schemas tailored to data access patterns.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Cloud Infra Setup', 'arch-cloud')">
+                    <div class="card-icon">☁️</div>
+                    <div class="card-title">Cloud Infra Setup</div>
+                    <div class="card-desc">Map AWS/Azure/GCP resources for hosting and deployment.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+            </div>
+
+            <h2 class="category-title"><span>🛡️</span> Non-Functional & Security</h2>
+            <div class="grid">
+                <div class="card" onclick="openPrompt('Threat Modeling', 'arch-threat')">
+                    <div class="card-icon">🕵️</div>
+                    <div class="card-title">Threat Modeling</div>
+                    <div class="card-desc">Apply STRIDE methodology to identify architectural security flaws.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Scalability Assessment', 'arch-scale')">
+                    <div class="card-icon">📈</div>
+                    <div class="card-title">Scalability Assessment</div>
+                    <div class="card-desc">Identify bottlenecks and caching/load balancing strategies.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Disaster Recovery Plan', 'arch-dr')">
+                    <div class="card-icon">🔥</div>
+                    <div class="card-title">Disaster Recovery Plan</div>
+                    <div class="card-desc">Establish RTO, RPO, and failover architectures.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+            </div>
+
+            <h2 class="category-title"><span>⚖️</span> Governance & Review</h2>
+            <div class="grid">
+                <div class="card" onclick="openPrompt('ADR Generator', 'arch-adr')">
+                    <div class="card-icon">📝</div>
+                    <div class="card-title">ADR Generator</div>
+                    <div class="card-desc">Draft formal Architecture Decision Records for key tech choices.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Tech Stack Selection', 'arch-stack')">
+                    <div class="card-icon">🛠️</div>
+                    <div class="card-title">Tech Stack Selection</div>
+                    <div class="card-desc">Evaluate frameworks vs requirements with pros, cons, and risks.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Code/Arch Review', 'arch-review')">
+                    <div class="card-icon">👀</div>
+                    <div class="card-title">Code/Arch Review</div>
+                    <div class="card-desc">Audit design patterns against SOLID and clean architecture rules.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DEVELOPER VIEW -->
+        <section id="view-dev" class="view-section">
+            <div class="header-block">
+                <h1>Developer Toolkit</h1>
+                <p>Accelerate coding, refactor technical debt, and automate boilerplate logic.</p>
+            </div>
+
+            <h2 class="category-title"><span>💻</span> Code Generation & Logic</h2>
+            <div class="grid">
+                <div class="card" onclick="openPrompt('Boilerplate Generator', 'dev-boiler')">
+                    <div class="card-icon">🧱</div>
+                    <div class="card-title">Boilerplate Generator</div>
+                    <div class="card-desc">Create framework-specific skeletons, models, and controllers.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Complex Logic Builder', 'dev-logic')">
+                    <div class="card-icon">🧠</div>
+                    <div class="card-title">Complex Logic Builder</div>
+                    <div class="card-desc">Implement algorithms, data transformations, and state machines.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Regex Wizard', 'dev-regex')">
+                    <div class="card-icon">🪄</div>
+                    <div class="card-title">Regex Wizard</div>
+                    <div class="card-desc">Generate and explain complex Regular Expressions for validation.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('SQL Optimizer', 'dev-sql')">
+                    <div class="card-icon">🐬</div>
+                    <div class="card-title">SQL Optimizer</div>
+                    <div class="card-desc">Refactor slow queries, add indexes, and improve execution plans.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+            </div>
+
+            <h2 class="category-title"><span>🔧</span> Refactoring & Debugging</h2>
+            <div class="grid">
+                <div class="card" onclick="openPrompt('Code Refactor & Clean', 'dev-refactor')">
+                    <div class="card-icon">✨</div>
+                    <div class="card-title">Code Refactor</div>
+                    <div class="card-desc">Apply SOLID principles and reduce cyclomatic complexity.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Bug Hunter', 'dev-bug')">
+                    <div class="card-icon">🐛</div>
+                    <div class="card-title">Bug Hunter</div>
+                    <div class="card-desc">Analyze stack traces, logs, and code to find root causes.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('Legacy Code Explainer', 'dev-legacy')">
+                    <div class="card-icon">🕸️</div>
+                    <div class="card-title">Legacy Explainer</div>
+                    <div class="card-desc">Translate undocumented, spaghetti code into plain English.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+            </div>
+
+            <h2 class="category-title"><span>🧪</span> Testing & Documentation</h2>
+            <div class="grid">
+                <div class="card" onclick="openPrompt('Unit Test Generator', 'dev-unit')">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-title">Unit Test Generator</div>
+                    <div class="card-desc">Write comprehensive Jest, JUnit, or PyTest suites with mocks.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('API Doc Generator', 'dev-apidoc')">
+                    <div class="card-icon">📚</div>
+                    <div class="card-title">API Doc Generator</div>
+                    <div class="card-desc">Generate Swagger/OpenAPI specs from code or JSON payloads.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" onclick="openPrompt('PR / Commit Message', 'dev-pr')">
+                    <div class="card-icon">🚀</div>
+                    <div class="card-title">PR Description</div>
+                    <div class="card-desc">Draft clear Git commit messages and Pull Request summaries.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- QA VIEW -->
+        <section id="view-qa" class="view-section">
+            <div class="header-block">
+                <h1>Quality Assurance Toolkit</h1>
+                <p>Advanced testing strategies, destructive analysis, and automation frameworks.</p>
+            </div>
+
+            <div class="filter-container">
+                <span class="filter-label">Filter by Tech Stack:</span>
+                <select class="filter-select" onchange="filterQaCards(this.value)">
+                    <option value="all">All Technologies</option>
+                    <option value="salesforce">Salesforce</option>
+                    <option value="servicenow">ServiceNow</option>
+                    <option value="api">API Integration</option>
+                    <option value="webui">Web UI (Cypress/Playwright)</option>
+                    <option value="mobile">Mobile (Appium/Native)</option>
+                    <option value="db-etl">Database & ETL</option>
+                </select>
+            </div>
+
+            <h2 class="category-title"><span>⚡</span> Functional Testing</h2>
+            <div class="grid">
+                <div class="card" data-tech="general webui mobile" onclick="openPrompt('Happy Path Architect', 'qa-happy')">
+                    <div class="card-icon">🛣️</div>
+                    <div class="card-title">Happy Path Architect</div>
+                    <div class="card-desc">Map out critical user journeys and success states.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="api general webui db-etl" onclick="openPrompt('Integration & E2E', 'qa-integ')">
+                    <div class="card-icon">🔗</div>
+                    <div class="card-title">Integration & E2E</div>
+                    <div class="card-desc">Validate end-to-end data flow across APIs.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="general webui mobile api" onclick="openPrompt('Negative Scenarios', 'qa-neg')">
+                    <div class="card-icon">🛑</div>
+                    <div class="card-title">Negative Scenarios</div>
+                    <div class="card-desc">Generate validation errors and timeout checks.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="general webui mobile api" onclick="openPrompt('Edge Case Destructor', 'qa-edge')">
+                    <div class="card-icon">💣</div>
+                    <div class="card-title">Edge Case Destructor</div>
+                    <div class="card-desc">Brainstorm boundary values and logical gaps.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <!-- Platform Specific Cards -->
+                <div class="card" data-tech="salesforce" onclick="openPrompt('Salesforce Flow Tester', 'qa-sf-flow')">
+                    <div class="card-icon">☁️</div>
+                    <div class="card-title">Salesforce Flow Tester</div>
+                    <div class="card-desc">Validate complex Flow logic, triggers, and DML operations.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="servicenow" onclick="openPrompt('ServiceNow ITSM Validator', 'qa-sn-itsm')">
+                    <div class="card-icon">🎫</div>
+                    <div class="card-title">ServiceNow ITSM Validator</div>
+                    <div class="card-desc">Generate test cases for incident and change state lifecycles.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="mobile" onclick="openPrompt('Mobile App Tester', 'qa-mobile')">
+                    <div class="card-icon">📲</div>
+                    <div class="card-title">Mobile App Tester</div>
+                    <div class="card-desc">Generate test scenarios for OS interruptions, gestures, and permissions.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+            </div>
+
+            <h2 class="category-title"><span>🤖</span> Automation & Data</h2>
+            <div class="grid">
+                <div class="card" data-tech="general webui mobile api" onclick="openPrompt('BDD / Gherkin', 'qa-bdd')">
+                    <div class="card-icon">🥒</div>
+                    <div class="card-title">BDD / Gherkin</div>
+                    <div class="card-desc">Convert requirements into strict Gherkin syntax.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="general db-etl api" onclick="openPrompt('Test Data Matrix', 'qa-data')">
+                    <div class="card-icon">📝</div>
+                    <div class="card-title">Test Data Matrix</div>
+                    <div class="card-desc">Generate validation tables with test data examples.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <!-- Platform Specific Cards -->
+                <div class="card" data-tech="api" onclick="openPrompt('API Contract Tester', 'qa-api-contract')">
+                    <div class="card-icon">🔌</div>
+                    <div class="card-title">API Contract Tester</div>
+                    <div class="card-desc">Design Postman/RestAssured strategies from JSON schemas.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="webui" onclick="openPrompt('Web UI Automation', 'qa-webui')">
+                    <div class="card-icon">🌐</div>
+                    <div class="card-title">Web UI Automation</div>
+                    <div class="card-desc">Design Cypress or Playwright framework strategies and assertions.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="db-etl" onclick="openPrompt('ETL Data Validator', 'qa-db-etl')">
+                    <div class="card-icon">🗄️</div>
+                    <div class="card-title">ETL Data Validator</div>
+                    <div class="card-desc">Write SQL validation queries for data pipelines and migrations.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+            </div>
+
+            <h2 class="category-title"><span>🛡️</span> Non-Functional (NFR)</h2>
+            <div class="grid">
+                <div class="card" data-tech="api general webui db-etl" onclick="openPrompt('Security Auditor', 'qa-sec')">
+                    <div class="card-icon">🔒</div>
+                    <div class="card-title">Security Auditor</div>
+                    <div class="card-desc">Analyze for vulnerabilities like IDOR and XSS.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="api general webui db-etl" onclick="openPrompt('Performance & Load', 'qa-perf')">
+                    <div class="card-icon">⚡</div>
+                    <div class="card-title">Performance & Load</div>
+                    <div class="card-desc">Identify bottlenecks and define SLAs.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="general webui mobile" onclick="openPrompt('Accessibility (a11y)', 'qa-a11y')">
+                    <div class="card-icon">♿</div>
+                    <div class="card-title">Accessibility (a11y)</div>
+                    <div class="card-desc">Review against WCAG 2.1 AA standards.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+                <div class="card" data-tech="general webui mobile" onclick="openPrompt('Compatibility Matrix', 'qa-comp')">
+                    <div class="card-icon">📱</div>
+                    <div class="card-title">Compatibility Matrix</div>
+                    <div class="card-desc">Risk-based list of devices and OS versions.</div>
+                    <div class="card-footer"><button class="btn-action">View Prompt</button></div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div style="margin-bottom: 0.5rem;">Built by Ashish Kumar Sankhua &bull; Integrated Engineering Hub</div>
+            <div>&copy; 2026 All Rights Reserved.</div>
+        </footer>
+    </div>
+
+    <!-- Modal Layout -->
+    <div id="modal-overlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <h2 id="modal-title" style="margin:0 0 0.5rem 0;">Prompt</h2>
+            <div id="modal-body" class="prompt-preview"></div>
+            <button id="modal-copy-btn" class="btn-action" style="width:100%; padding: 1rem; background: #0f172a; color: white; border: none; border-radius: 8px;" onclick="copyCurrentPrompt()">Copy to Clipboard</button>
+        </div>
+    </div>
+
+    <!-- Hidden Prompt Repository -->
+    <div style="display:none">
+        
+        <!-- ================= BA Prompts ================= -->
+        <textarea id="ba-story">You are a Senior Business Analyst helping me write high-quality User Stories.
+
+Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What specific feature or functionality are we defining?
+2. Who is the specific user persona/actor?
+3. What value or benefit does this feature provide to them?
+4. Are there any specific constraints or acceptance criteria I should know?
+
+After I answer all 4, generate a set of INVEST-compliant User Stories. For each story, provide: Title, Story Format, 3-5 Bulleted Acceptance Criteria, Priority Assessment. Start with question 1.</textarea>
+
+        <textarea id="ba-gap">You are a Business Analyst conducting a Gap Analysis.
+
+Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the current 'As-Is' state (process or system)?
+2. What is the desired 'To-Be' future state?
+3. Are we focusing on Functional, Process, or Data gaps?
+4. Are there any technical or budget constraints to bridging these gaps?
+
+After I answer all 4, generate a Gap Analysis Table with columns: Gap Category, Description of Gap, Impact (High/Medium/Low), Recommended Action to Bridge. Start with question 1.</textarea>
+
+        <textarea id="ba-usecase">You are a Systems Analyst documenting a detailed Use Case.
+
+Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the name of the process or system function?
+2. Who is the Primary Actor initiating this?
+3. What are the strict Preconditions (what must be true before starting)?
+4. Briefly describe the happy path flow.
+
+After I answer all 4, generate a Use Case Specification including: Use Case Name & ID, Actor & Trigger, Preconditions & Postconditions, Main Success Scenario, Alternate Flows, Exception Handling. Start with question 1.</textarea>
+
+        <textarea id="ba-ac">You are a Product Owner expert in BDD (Behavior Driven Development).
+
+Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the User Story we are refining?
+2. What is the "Happy Path" success outcome?
+3. What are the negative scenarios or validation errors?
+4. Are there any specific business rules (e.g., data limits, user roles)?
+
+After I answer all 4, generate strict Gherkin Syntax Acceptance Criteria covering Happy Path, Negative Path, and Edge Cases. Start with question 1.</textarea>
+        
+        <textarea id="ba-flow">You are a Process Architect helping me visualize a workflow.
+
+Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What process are we mapping?
+2. What is the trigger/start point?
+3. What are the key decision points (Yes/No questions)?
+4. What is the final end state?
+
+After I answer all 4, generate valid Mermaid JS Flowchart syntax (graph TD) including distinct shapes for Start/End, Processes, and Decisions. Start with question 1.</textarea>
+
+        <textarea id="ba-data">You are a Data Analyst creating a Data Dictionary.
+
+Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What screen, report, or API endpoint are we analyzing?
+2. List the key data fields or entities involved.
+3. Are there specific validation rules?
+4. Do any fields have default values or calculated logic?
+
+After I answer all 4, generate a Data Dictionary Table with columns: Field Name, Data Type, Constraints/Rules, Source/Origin, Example Value. Start with question 1.</textarea>
+
+        <textarea id="ba-risk">You are a Project Risk Manager.
+
+Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What feature or project change are we assessing?
+2. What are the potential failure points or threats?
+3. Who or what would be impacted if these failures occur?
+4. Do we have any existing controls or backups in place?
+
+After I answer all 4, generate a Risk Assessment Matrix including: Risk Description, Impact Score, Probability Score, Risk Level, Mitigation Strategy. Start with question 1.</textarea>
+
+        <textarea id="ba-stake">You are a Change Management Specialist.
+
+Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the project or change initiative?
+2. List the teams, departments, or individuals involved.
+3. Who has high decision-making power?
+4. Who is highly interested or impacted by the outcome?
+
+After I answer all 4, generate a Stakeholder Analysis Matrix detailing Power/Interest Classification, Key Concerns, Recommended Communication Channel & Frequency. Start with question 1.</textarea>
+
+        <textarea id="ba-mins">You are a Lead Business Analyst documenting a meeting.
+
+Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What was the meeting objective?
+2. Please paste the raw notes or rough transcript.
+3. Who were the key attendees?
+4. Were there any specific deadlines mentioned?
+
+After I answer all 4, generate professional Meeting Minutes including Executive Summary, Decisions Made, Action Items, Open Questions. Start with question 1.</textarea>
+
+        <textarea id="ba-cr">You are a Business Analyst writing a formal Change Request (CR).
+
+Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the problem statement or reason for the change?
+2. What is the proposed solution?
+3. What is the estimated impact (Time/Cost/Scope)?
+4. What happens if we do *not* make this change?
+
+After I answer all 4, generate a structured Change Request Document including Change Description, Impact Analysis, Risk Assessment, Alternatives Considered, Final Recommendation. Start with question 1.</textarea>
+
+        <!-- Tech Specific BA Prompts -->
+        <textarea id="ba-sf">You are a Salesforce Business Analyst. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. Which Salesforce Cloud or module is this for (e.g., Sales, Service, Experience Cloud)?
+2. What standard and custom objects are involved in this requirement?
+3. What are the specific automation or validation needs (e.g., Flows, Validation Rules)?
+4. What data visibility or profile-level access rules need to be enforced?
+
+After I answer all 4, generate a Salesforce Requirements Specification detailing necessary Custom Fields, Flow Logic behavior, and Security/Sharing requirements. Start with question 1.</textarea>
+
+        <textarea id="ba-sn">You are a ServiceNow Business Analyst. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. Which ServiceNow module is being implemented or modified (e.g., ITSM, CSM, HRSD)?
+2. What is the target workflow or state transition lifecycle?
+3. Who are the assignment groups and what are the approval routing rules?
+4. Are there any specific SLA or notification trigger requirements?
+
+After I answer all 4, generate a ServiceNow Process Definition detailing State Transitions, Assignment Logic, Approval Matrix, and required Catalog Items/Forms. Start with question 1.</textarea>
+
+        <textarea id="ba-api">You are an API Integration Business Analyst. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What are the Source and Target systems being integrated?
+2. What specific business event triggers this integration?
+3. What is the core data payload being transferred (list key fields)?
+4. What should happen in case of a failure or timeout (error handling)?
+
+After I answer all 4, generate a Business API Contract detailing the Event Trigger, Data Mapping Table, Success/Failure criteria, and Retry logic. Start with question 1.</textarea>
+
+        <textarea id="ba-bi">You are a Data & BI Business Analyst. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. Who is the primary audience for this dashboard (e.g., Executives, Operations)?
+2. What are the top 3-5 KPIs or metrics they need to see?
+3. What are the desired filters, dimensions, or drill-down capabilities?
+4. Where is this data currently sourced from?
+
+After I answer all 4, generate a BI Dashboard Specification detailing the View Layout, Metric Definitions/Formulas, Required Filters, and Data Source dependencies. Start with question 1.</textarea>
+
+        <!-- ================= PM Prompts ================= -->
+        <textarea id="pm-charter">You are a Senior Project Manager. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the project name and primary objective?
+2. What are the core deliverables?
+3. What is the desired timeline or major milestones?
+4. Are there strict budget or resource constraints?
+
+After I answer all 4, generate a formal Project Charter outlining the Vision, Scope, Milestones, and Success Criteria. Start with question 1.</textarea>
+
+        <textarea id="pm-wbs">You are a Project Planning Expert. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What specific project phase or major deliverable are we breaking down?
+2. What are the high-level tasks required?
+3. Who (what roles) will be executing these tasks?
+4. What is the estimated total duration for this phase?
+
+After I answer all 4, generate a structured Work Breakdown Structure (WBS) with task IDs, descriptions, assignments, and estimated hours/days. Start with question 1.</textarea>
+
+        <textarea id="pm-sprint">You are an Agile Scrum Master. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the primary Sprint Goal?
+2. What is the team's capacity or expected velocity?
+3. What are the highest priority user stories?
+4. Is there any known tech debt or carryover work?
+
+After I answer all 4, generate a Sprint Plan summary including the Sprint Goal, Capacity Allocation, Priority Backlog, and Risk Factors. Start with question 1.</textarea>
+
+        <textarea id="pm-resource">You are a Resource Management Specialist. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the project or task block?
+2. What specific roles and skillsets are required?
+3. What is the timeline for when these resources are needed?
+4. Are there any availability constraints (e.g., vacations, shared resources)?
+
+After I answer all 4, generate a Resource Allocation Matrix mapping roles to tasks with weekly effort estimates. Start with question 1.</textarea>
+
+        <textarea id="pm-status">You are an Executive PMO Lead. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the project name and the current reporting period?
+2. What were the key accomplishments this week?
+3. What are the upcoming milestones for next week?
+4. Are there any current blockers, risks, or required decisions?
+
+After I answer all 4, generate an Executive Status Report tailored for senior stakeholders (Red/Amber/Green status format). Start with question 1.</textarea>
+
+        <textarea id="pm-risk">You are a Project Risk Manager. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the new risk or issue that has been identified?
+2. What is the potential impact on scope, schedule, or budget?
+3. What is the probability of this occurring?
+4. What is our proposed mitigation or contingency plan?
+
+After I answer all 4, generate a formal Risk Register Entry including Risk ID, Description, Impact/Probability Score, and Action Plan. Start with question 1.</textarea>
+
+        <textarea id="pm-ccb">You are a Change Control Manager. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the proposed change to the project?
+2. What is the business justification for this change?
+3. How will this impact the current scope, timeline, and budget?
+4. What happens if this change is rejected?
+
+After I answer all 4, generate a Change Control Board (CCB) Pitch Document detailing the change request, impact analysis, and alternatives. Start with question 1.</textarea>
+
+        <textarea id="pm-retro">You are an Agile Delivery Manager. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What Sprint or Project Phase are we reviewing?
+2. What went particularly well?
+3. What didn't go well or caused bottlenecks?
+4. What are the proposed action items for the next phase?
+
+After I answer all 4, generate a structured Retrospective Summary categorizing Start/Stop/Continue items and assigned actionables. Start with question 1.</textarea>
+
+        <textarea id="pm-comms">You are a Stakeholder Communications Expert. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. Who is the target stakeholder or group?
+2. What specific information do they need to be informed of?
+3. What is their preferred communication channel (e.g., Email, Meeting, Slack)?
+4. What is the required frequency of updates?
+
+After I answer all 4, generate a Communications Plan Matrix entry detailing the audience, message, channel, and frequency. Start with question 1.</textarea>
+
+        <textarea id="pm-conflict">You are a Project Leadership Coach. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. Who are the parties involved in the dispute?
+2. What is the core disagreement or bottleneck?
+3. How is this impacting the project execution?
+4. What is the ideal desired outcome?
+
+After I answer all 4, generate a step-by-step Conflict Resolution Strategy, including talking points and a mediation framework. Start with question 1.</textarea>
+
+        <!-- ================= Architect Prompts ================= -->
+        <textarea id="arch-hld">You are a Principal Cloud Architect. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the primary goal of the system we are designing?
+2. What are the expected traffic/load patterns (e.g., DAU, RPS)?
+3. What existing technology stack or cloud provider are we constrained to?
+4. What are the key non-functional requirements (e.g., latency, availability)?
+
+After I answer all 4, generate a High-Level Design (HLD) document including a Mermaid.js architecture diagram and component interaction descriptions. Start with question 1.</textarea>
+
+        <textarea id="arch-micro">You are a Microservices Architecture Expert. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the core monolith feature or domain we are trying to extract?
+2. What data or tables does this domain own exclusively?
+3. How does this feature currently communicate with other parts of the system?
+4. What are the consistency requirements (eventual vs strong)?
+
+After I answer all 4, generate a Microservice Extraction Plan detailing bounded contexts, API contracts, and database decoupling strategies. Start with question 1.</textarea>
+
+        <textarea id="arch-db">You are a Database Solutions Architect. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the core entity/data we are storing?
+2. Is the workload read-heavy, write-heavy, or balanced?
+3. Do we need strong ACID compliance or is NoSQL flexibility preferred?
+4. What are the primary query patterns or filters used to fetch this data?
+
+After I answer all 4, generate a Database Schema Design including recommended DB type, table/collection definitions, and suggested indexes. Start with question 1.</textarea>
+
+        <textarea id="arch-cloud">You are a Cloud Infrastructure Engineer. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. Which cloud provider are we using (AWS, Azure, GCP)?
+2. What type of compute resources are preferred (Serverless, Containers, VMs)?
+3. How are we handling storage and caching?
+4. Are there specific networking or VPC constraints?
+
+After I answer all 4, generate a Cloud Infrastructure Setup guide mapping out the required services, IAM roles, and networking layout. Start with question 1.</textarea>
+
+        <textarea id="arch-threat">You are an Application Security Architect. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. Describe the architecture component or data flow being reviewed.
+2. What sensitive data passes through this boundary?
+3. How are users or services authenticated and authorized?
+4. What are the external interfaces or integrations?
+
+After I answer all 4, generate a Threat Model using the STRIDE methodology, listing potential vulnerabilities and mitigation strategies. Start with question 1.</textarea>
+
+        <textarea id="arch-scale">You are a Distributed Systems Architect. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. Which specific component is currently acting as a bottleneck?
+2. What metrics indicate this bottleneck (e.g., CPU, memory, DB locks)?
+3. Is the component currently stateful or stateless?
+4. What is our acceptable caching strategy (e.g., TTL, cache invalidation)?
+
+After I answer all 4, generate a Scalability Assessment proposing horizontal/vertical scaling, caching layers, and asynchronous processing. Start with question 1.</textarea>
+
+        <textarea id="arch-dr">You are an Enterprise Resilience Architect. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the critical business system being protected?
+2. What is the required RTO (Recovery Time Objective)?
+3. What is the required RPO (Recovery Point Objective)?
+4. What is the allocated budget for disaster recovery (Low/Med/High)?
+
+After I answer all 4, generate a Disaster Recovery Plan outlining backup strategies, failover architectures (e.g., Active-Passive), and testing procedures. Start with question 1.</textarea>
+
+        <textarea id="arch-adr">You are an Architecture Governance Lead. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the architectural decision that needs to be made?
+2. What is the business or technical context driving this decision?
+3. What are the top 2-3 considered alternatives?
+4. What is the chosen option and why?
+
+After I answer all 4, generate a formal Architecture Decision Record (ADR) including Context, Alternatives, Decision, and Consequences. Start with question 1.</textarea>
+
+        <textarea id="arch-stack">You are a Chief Technology Officer (CTO). Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What type of application are we building (e.g., Web App, Mobile, Data Pipeline)?
+2. What is the team's current expertise or background?
+3. What are the primary performance and timeline constraints?
+4. Are there any specific integration or ecosystem requirements?
+
+After I answer all 4, generate a Tech Stack Selection Matrix comparing 2-3 viable stacks, highlighting Pros, Cons, and a final recommendation. Start with question 1.</textarea>
+
+        <textarea id="arch-review">You are a Principal Staff Engineer conducting a review. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What codebase, module, or architecture diagram are we reviewing? (Please describe or paste code).
+2. What specific design patterns are you trying to implement?
+3. Are there concerns about tight coupling or technical debt?
+4. What are the testing or maintainability goals?
+
+After I answer all 4, generate an Architecture Review Document highlighting violations of SOLID principles and suggesting clean architecture refactors. Start with question 1.</textarea>
+
+        <!-- ================= Developer Prompts ================= -->
+        <textarea id="dev-boiler">You are an Expert Senior Developer. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What programming language and framework are we using?
+2. What is the name and core purpose of the module/component?
+3. What specific libraries, ORMs, or dependencies must be included?
+4. Are there any specific design patterns required (e.g., Repository, MVC)?
+
+After I answer all 4, generate the complete Boilerplate Code including imports, class/function definitions, and basic dependency injection setup. Start with question 1.</textarea>
+
+        <textarea id="dev-logic">You are a Lead Software Engineer. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the specific algorithmic problem or business logic to implement?
+2. What are the expected inputs (data types/structures)?
+3. What are the expected outputs or side effects?
+4. Are there any performance constraints (Time/Space complexity)?
+
+After I answer all 4, generate the implementation code with detailed inline comments explaining the algorithmic approach. Start with question 1.</textarea>
+
+        <textarea id="dev-regex">You are a Regex Master. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What exactly are we trying to match or extract? (Provide examples of matches).
+2. What should specifically NOT match? (Provide examples of non-matches).
+3. Do you need capture groups to extract specific parts of the string?
+4. Which programming language will this regex be executed in?
+
+After I answer all 4, generate the optimized Regular Expression, a breakdown of how it works, and a code snippet implementing it in the requested language. Start with question 1.</textarea>
+
+        <textarea id="dev-sql">You are a Database Performance Engineer. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. Please paste the slow SQL query you are trying to optimize.
+2. What SQL dialect are we using (e.g., PostgreSQL, MySQL, SQL Server)?
+3. Can you describe the schemas/indexes of the tables involved?
+4. What is the specific performance issue (e.g., full table scan, slow joins)?
+
+After I answer all 4, generate an Optimized SQL Query, a suggested execution plan, and recommendations for new indexes. Start with question 1.</textarea>
+
+        <textarea id="dev-refactor">You are a Clean Code Advocate. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. Please paste the block of code you want to refactor.
+2. What is the primary issue with this code (e.g., too complex, repeated logic, hard to test)?
+3. What language and framework is this?
+4. Do you want to enforce strict typing or specific linting rules?
+
+After I answer all 4, generate the Refactored Code with an explanation of which code smells were removed and which SOLID principles were applied. Start with question 1.</textarea>
+
+        <textarea id="dev-bug">You are a Senior Debugging Specialist. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the specific error message or unexpected behavior? (Paste stack trace if available).
+2. What steps reliably reproduce this bug?
+3. What did you expect to happen instead?
+4. Can you paste the relevant code snippet where the error originates?
+
+After I answer all 4, generate a Root Cause Analysis and provide the exact code fix required to resolve the bug. Start with question 1.</textarea>
+
+        <textarea id="dev-legacy">You are a Reverse Engineer. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. Please paste the legacy or undocumented code block.
+2. What programming language is this written in?
+3. What is your best guess as to what this system/module does?
+4. What is your goal (e.g., documenting it, migrating it, fixing it)?
+
+After I answer all 4, generate a Plain English Explanation of the code's control flow, identify key variables, and provide inline comments for the original snippet. Start with question 1.</textarea>
+
+        <textarea id="dev-unit">You are a Test Driven Development (TDD) Expert. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. Please paste the function or component you want to test.
+2. What testing framework and mocking library are we using (e.g., Jest, PyTest, JUnit)?
+3. What external dependencies (APIs, databases) need to be mocked?
+4. What are the key edge cases that must be covered?
+
+After I answer all 4, generate a comprehensive Test Suite covering the happy path, error handling, and mocked dependencies. Start with question 1.</textarea>
+
+        <textarea id="dev-apidoc">You are an API Integration Specialist. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the endpoint path and HTTP method?
+2. What does the request payload/parameters look like? (Paste example JSON).
+3. What does the successful response look like? (Paste example JSON).
+4. What are the possible error codes and authentication methods?
+
+After I answer all 4, generate a valid OpenAPI/Swagger YAML specification for this endpoint. Start with question 1.</textarea>
+
+        <textarea id="dev-pr">You are a Lead Maintainer of an Open Source Project. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What issue or ticket number does this address?
+2. What are the major changes made in this code?
+3. Were there any breaking changes or database migrations included?
+4. How should the reviewer manually test this change?
+
+After I answer all 4, generate a professional Pull Request Description template and a summarized Git Commit Message following conventional commits format. Start with question 1.</textarea>
+
+        <!-- ================= QA Prompts ================= -->
+        <textarea id="qa-happy">You are a Senior QA Analyst helping me map out critical user journeys. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next: 1. What feature are we testing? (one sentence) 2. What is the primary goal for the user in this flow? 3. What are the key data inputs required? 4. What does "success" look like (UI response and Database change)? After I answer all 4, generate a Critical User Journey Table with columns: Step ID, Action, Expected Data Change, Expected UI Response. Start now. Ask me question 1.</textarea>
+
+        <textarea id="qa-integ">You are an Integration Test Engineer. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next: 1. What is the end-to-end workflow we are validating? 2. Which internal services or APIs are involved? 3. Are there any 3rd party integrations (Payment gateways, Email services)? 4. What triggers the final success state? After I answer all 4, generate an E2E Integration Test Plan including: Data Flow Verification (Service A -> Service B), API Response Checks (200 OK, JSON structure), Database State Verification. Start now. Ask me question 1.</textarea>
+
+        <textarea id="qa-neg">You are a Negative Testing Specialist. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next: 1. What form or specific input are we testing? 2. What are the strict validation rules? (Required fields, format types) 3. How should the system handle failures? (Error banners, inline red text) 4. Are there specific error codes we expect? (400, 401, 403, 500) After I answer all 4, generate a Negative Scenario List covering: Invalid Input Types, Missing Required Data, API Failure Handling, Specific Error Message Verifications. Start now. Ask me question 1.</textarea>
+
+        <textarea id="qa-edge">You are a Destructive Tester looking to break the system. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What specific feature logic are we analyzing?
+2. What are the input fields and their strict constraints?
+3. Are there any external dependencies or state changes involved?
+4. What user permissions are involved?
+
+After I answer all 4, generate a list of 10 Destructive Scenarios covering Boundary Values, State Conflicts, and Logical Gaps. Start with question 1.</textarea>
+
+        <textarea id="qa-bdd">You are a BDD Automation Expert. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the feature name?
+2. Who is the primary actor? (User role)
+3. What is the core functionality or behavior being described?
+4. What are the different outcomes (Success vs. Failure)?
+
+After I answer all 4, generate Strict Gherkin Syntax Scenarios including: Feature Background, Scenario: Happy Path, and Scenario: Negative Path. Start with question 1.</textarea>
+
+        <textarea id="qa-data">You are a Data Quality Assurance Specialist. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next: 1. What form or input section are we analyzing? 2. List the fields present in this form. 3. Are there any specific business rules for validation? 4. How should the system handle errors? After I answer all 4, generate a Data Validation Matrix with columns: Field Name, Data Type, Valid Test Data (3 examples), Invalid Test Data (3 examples), Expected Error Message. Start now. Ask me question 1.</textarea>
+
+        <textarea id="qa-sec">You are an Application Security Engineer (AppSec). Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What endpoint or feature is being secured?
+2. What user roles and permissions access this?
+3. Does this feature handle sensitive PII or financial data?
+4. How is data transmitted and stored?
+
+After I answer all 4, generate Security Test Cases based on OWASP Top 10 including: IDOR checks, Input Validation (XSS/Injection), and AuthZ/AuthN flaws. Start with question 1.</textarea>
+
+        <textarea id="qa-perf">You are a Performance Engineering Lead. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next: 1. Which user flow or API needs profiling? 2. What is the expected user load? 3. What are the acceptable response time SLAs? 4. Are there specific bottlenecks you are worried about? After I answer all 4, generate a Load Test Plan covering: Potential Bottlenecks, SLA Definitions, Concurrency Scenarios. Start now. Ask me question 1.</textarea>
+
+        <textarea id="qa-a11y">You are an Accessibility (WCAG) Specialist. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next: 1. What screen or component are we auditing? 2. Is this for Web or Mobile? 3. Are there complex interactive elements? 4. What is the target compliance level? After I answer all 4, generate an a11y Checklist covering: Keyboard Navigation, Screen Reader compatibility (ARIA), Color Contrast & Visual Indicators. Start now. Ask me question 1.</textarea>
+
+        <textarea id="qa-comp">You are a QA Strategy Lead. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next: 1. What feature is being released? 2. Who is the target audience geography? 3. Does the feature use specific hardware capabilities? 4. What are the analytics showing for top browsers/devices? After I answer all 4, generate a Risk-Based Compatibility Matrix covering: Priority Browsers, Mobile OS Versions, Screen Resolutions to test. Start now. Ask me question 1.</textarea>
+
+        <!-- Tech Specific QA Prompts -->
+        <textarea id="qa-sf-flow">You are a Salesforce QA Expert. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What Flow, Apex Trigger, or Process Builder are we testing?
+2. What Salesforce objects and specific record types are involved?
+3. Are there any specific Validation Rules, Sharing Rules, or profile restrictions to bypass/test?
+4. What are the expected UI outcomes and DML operations?
+
+After I answer all 4, generate a Salesforce-specific Test Plan covering Execution Contexts, Governor Limits, Positive/Negative scenarios, and Role-Based Access controls. Start with question 1.</textarea>
+
+        <textarea id="qa-sn-itsm">You are a ServiceNow QA Expert. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What ITSM module (Incident, Change, Request, Problem) are we testing?
+2. What is the specific state lifecycle or workflow we need to validate?
+3. Are there specific UI Policies, Data Policies, or Client Scripts applied?
+4. What approvals or assignment routing rules are required?
+
+After I answer all 4, generate a ServiceNow Test Plan covering State Transitions, Role Validations (itil, admin, etc.), and UI Policy visibility checks. Start with question 1.</textarea>
+
+        <textarea id="qa-api-contract">You are an API Test Automation Engineer. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the API endpoint URL and HTTP method (GET, POST, PUT, DELETE)?
+2. What are the mandatory headers and authentication methods required?
+3. Please provide the expected JSON request and response schema parameters.
+4. What specific error codes (400, 401, 403, 500) and messages must be validated?
+
+After I answer all 4, generate an API Test Strategy (ready for Postman or RestAssured) covering Schema Validation, Payload Boundary Values, and Auth checks. Start with question 1.</textarea>
+
+        <textarea id="qa-webui">You are a Web UI Test Automation Architect. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What framework are we using (e.g., Cypress, Playwright, Selenium)?
+2. What specific page, component, or user flow are we automating?
+3. What are the key dynamic elements or asynchronous states to wait for?
+4. Are there specific browser contexts or viewports we need to cover?
+
+After I answer all 4, generate a UI Automation Script Strategy detailing locator strategies, handling network waits, and a sample script snippet. Start with question 1.</textarea>
+
+        <textarea id="qa-mobile">You are a Mobile QA Expert. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. Is this a native iOS, native Android, or cross-platform (React Native/Flutter) app?
+2. What specific screen or feature are we testing?
+3. What device hardware interactions are involved (e.g., camera, GPS, biometric auth)?
+4. How should the app handle interruptions (calls, network loss, push notifications)?
+
+After I answer all 4, generate a Mobile Device Test Matrix covering OS permutations, gesture validations, and hardware interruption scenarios. Start with question 1.</textarea>
+
+        <textarea id="qa-db-etl">You are a Data QA Engineer. Ask me these questions ONE AT A TIME. Wait for my answer before asking the next:
+1. What is the source data system and the target data system?
+2. Are there specific transformation rules or aggregations applied during transit?
+3. What is the scale of the data being moved (e.g., 100 rows vs 10 million rows)?
+4. What SQL dialect or data warehouse are we validating against (e.g., Snowflake, PostgreSQL, Oracle)?
+
+After I answer all 4, generate an ETL Validation Plan including SQL queries for row counts, null checks, data truncation, and mapping verification. Start with question 1.</textarea>
+    </div>
+
+    <script>
+        // State Management
+        function setRole(role) {
+            const body = document.body;
+            const views = {
+                'ba': document.getElementById('view-ba'),
+                'pm': document.getElementById('view-pm'),
+                'arch': document.getElementById('view-arch'),
+                'dev': document.getElementById('view-dev'),
+                'qa': document.getElementById('view-qa')
+            };
+
+            // Apply Theme
+            body.className = role + '-theme';
+
+            // Toggle Views
+            for (let key in views) {
+                if(views[key]) {
+                    views[key].classList.remove('active');
+                }
+            }
+            if (views[role]) {
+                views[role].classList.add('active');
+            }
+        }
+
+        // Modal Controls
+        function openPrompt(title, textId) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-body').innerText = document.getElementById(textId).value;
+            document.getElementById('modal-overlay').style.display = 'flex';
+            
+            // Reset button text just in case
+            const copyBtn = document.getElementById('modal-copy-btn');
+            copyBtn.innerText = 'Copy to Clipboard';
+            
+            // Set neutral button styling based on theme
+            if (document.body.classList.contains('ba-theme') || document.body.classList.contains('pm-theme') || document.body.classList.contains('qa-theme')) {
+                copyBtn.style.background = '#0f172a';
+                copyBtn.style.color = 'white';
+            } else {
+                copyBtn.style.background = '#1e293b'; 
+                copyBtn.style.color = 'white';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').style.display = 'none';
+        }
+
+        // Copy functionality using reliable document.execCommand for embedded iframes/canvas
+        function copyCurrentPrompt() {
+            const textToCopy = document.getElementById('modal-body').innerText;
+            const copyBtn = document.getElementById('modal-copy-btn');
+
+            // Create temporary textarea for copying
+            const textArea = document.createElement("textarea");
+            textArea.value = textToCopy;
+            
+            // Avoid scrolling to bottom
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    let btnColor = '#7c3aed'; // Default BA Purple
+                    let textColor = 'white';
+                    
+                    if (document.body.classList.contains('qa-theme')) { btnColor = '#3b82f6'; }
+                    else if (document.body.classList.contains('pm-theme')) { btnColor = '#10b981'; }
+                    else if (document.body.classList.contains('arch-theme')) { btnColor = '#f59e0b'; textColor = '#000'; }
+                    else if (document.body.classList.contains('dev-theme')) { btnColor = '#06b6d4'; textColor = '#000'; }
+                    
+                    copyBtn.innerText = '✓ Copied Successfully';
+                    copyBtn.style.background = btnColor;
+                    copyBtn.style.color = textColor;
+                }
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+                copyBtn.innerText = 'Error Copying';
+            }
+
+            document.body.removeChild(textArea);
+
+            // Reset after 2 seconds
+            setTimeout(() => {
+                copyBtn.innerText = 'Copy to Clipboard';
+                copyBtn.style.background = (document.body.classList.contains('arch-theme') || document.body.classList.contains('dev-theme')) ? '#1e293b' : '#0f172a';
+                copyBtn.style.color = 'white';
+            }, 2000);
+        }
+
+        // Filter Logic for QA Tech Stack
+        function filterQaCards(tech) {
+            const qaSection = document.getElementById('view-qa');
+            const grids = qaSection.querySelectorAll('.grid');
+            
+            grids.forEach(grid => {
+                const cards = Array.from(grid.querySelectorAll('.card'));
+                
+                cards.forEach(card => {
+                    const cardTech = card.getAttribute('data-tech') || '';
+                    
+                    if (tech === 'all') {
+                        card.style.display = 'flex';
+                        card.style.order = '0'; // Reset to default sort
+                    } else if (cardTech.includes(tech) && !cardTech.includes('general')) {
+                        // TIER 1: Highly specific tech cards jump to the absolute top
+                        card.style.display = 'flex';
+                        card.style.order = '-2'; 
+                    } else if (cardTech.includes(tech)) {
+                        // TIER 2: General cards explicitly tagged for this tech go next
+                        card.style.display = 'flex';
+                        card.style.order = '-1'; 
+                    } else if (cardTech.includes('general')) {
+                        // TIER 3: Keep generic cards visible underneath
+                        card.style.display = 'flex';
+                        card.style.order = '0'; 
+                    } else {
+                        card.style.display = 'none'; // Hide unrelated specific tech cards
+                    }
+                });
+            });
+
+            // Hide category titles and grid sections if all cards underneath them are hidden
+            qaSection.querySelectorAll('.category-title').forEach(title => {
+                const grid = title.nextElementSibling;
+                if (grid && grid.classList.contains('grid')) {
+                    const visibleCards = Array.from(grid.querySelectorAll('.card')).filter(c => c.style.display !== 'none');
+                    if (visibleCards.length === 0) {
+                        title.style.display = 'none';
+                        grid.style.display = 'none';
+                    } else {
+                        title.style.display = 'flex';
+                        grid.style.display = 'grid'; // Reverts to CSS Grid
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
