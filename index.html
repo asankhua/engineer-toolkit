@@ -14,6 +14,7 @@
             --primary-dev: #06b6d4; /* Cyan */
             --primary-qa: #3b82f6; /* Blue */
             --primary-hub: #f43f5e; /* Rose */
+            --primary-pb: #ec4899; /* Pink for Prompt Builder */
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             --card-radius: 16px;
 
@@ -106,6 +107,7 @@
         .dev-theme .logo-icon { stroke: var(--primary-dev); }
         .qa-theme .logo-icon { stroke: var(--primary-qa); }
         .hub-theme .logo-icon { stroke: var(--primary-hub); }
+        .pb-theme .logo-icon { stroke: var(--primary-pb); }
         
         .nav-logo span { transition: var(--transition); font-weight: 800; }
 
@@ -115,6 +117,7 @@
         .dev-theme .nav-logo span { color: var(--primary-dev); }
         .qa-theme .nav-logo span { color: var(--primary-qa); }
         .hub-theme .nav-logo span { color: var(--primary-hub); }
+        .pb-theme .nav-logo span { color: var(--primary-pb); }
 
         /* Controls: Search & Theme Toggle */
         .nav-controls {
@@ -165,6 +168,7 @@
         .dev-theme .search-bar:focus { box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2); border-color: var(--primary-dev); }
         .qa-theme .search-bar:focus { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); border-color: var(--primary-qa); }
         .hub-theme .search-bar:focus { box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.2); border-color: var(--primary-hub); }
+        .pb-theme .search-bar:focus { box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.2); border-color: var(--primary-pb); }
 
         .theme-toggle-btn {
             background: var(--input-bg);
@@ -215,6 +219,7 @@
         .arch-theme #btn-arch { background: var(--primary-arch); color: #000; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
         .dev-theme #btn-dev { background: var(--primary-dev); color: #000; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
         .qa-theme #btn-qa { background: var(--primary-qa); color: white; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
+        .pb-theme #btn-pb { background: var(--primary-pb); color: white; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); }
         .hub-theme #btn-hub { background: var(--primary-hub); color: white; box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3); }
 
         /* --- Main Layout --- */
@@ -244,6 +249,7 @@
         .arch-theme .header-block h1 { background: linear-gradient(135deg, var(--text-color) 0%, #f59e0b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .dev-theme .header-block h1 { background: linear-gradient(135deg, var(--text-color) 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .qa-theme .header-block h1 { background: linear-gradient(135deg, var(--text-color) 0%, #3b82f6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .pb-theme .header-block h1 { background: linear-gradient(135deg, var(--text-color) 0%, #ec4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .hub-theme .header-block h1 { background: linear-gradient(135deg, var(--text-color) 0%, #f43f5e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         .header-block p { font-size: 1.15rem; opacity: 0.7; max-width: 650px; margin: 0 auto; line-height: 1.6; }
@@ -293,6 +299,7 @@
         .arch-theme .step-number { background: var(--primary-arch); color: #000; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2); }
         .dev-theme .step-number { background: var(--primary-dev); color: #000; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2); }
         .qa-theme .step-number { background: var(--primary-qa); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2); }
+        .pb-theme .step-number { background: var(--primary-pb); box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2); }
         .hub-theme .step-number { background: var(--primary-hub); box-shadow: 0 4px 15px rgba(244, 63, 94, 0.2); }
 
         .step-head { font-weight: 600; font-size: 1.05rem; margin-bottom: 0.5rem; letter-spacing: -0.2px; }
@@ -460,6 +467,7 @@
         .arch-theme .app-footer { background-color: rgba(245, 158, 11, 0.02); }
         .dev-theme .app-footer { background-color: rgba(6, 182, 212, 0.02); }
         .qa-theme .app-footer { background-color: rgba(59, 130, 246, 0.02); }
+        .pb-theme .app-footer { background-color: rgba(236, 72, 153, 0.02); }
         .hub-theme .app-footer { background-color: rgba(244, 63, 94, 0.02); }
 
         .footer-logo { display: flex; align-items: center; gap: 0.6rem; font-weight: 700; font-size: 1.1rem; opacity: 0.9; }
@@ -468,6 +476,7 @@
         .arch-theme .footer-logo svg { stroke: var(--primary-arch); }
         .dev-theme .footer-logo svg { stroke: var(--primary-dev); }
         .qa-theme .footer-logo svg { stroke: var(--primary-qa); }
+        .pb-theme .footer-logo svg { stroke: var(--primary-pb); }
         .hub-theme .footer-logo svg { stroke: var(--primary-hub); }
 
         .footer-copy { font-size: 0.8rem; opacity: 0.6; letter-spacing: 1px; text-transform: uppercase; }
@@ -503,6 +512,7 @@
             <button id="btn-arch" class="toggle-btn" onclick="setRole('arch')">ARCHITECT</button>
             <button id="btn-dev" class="toggle-btn" onclick="setRole('dev')">DEVELOPER</button>
             <button id="btn-qa" class="toggle-btn" onclick="setRole('qa')">TESTER</button>
+            <button id="btn-pb" class="toggle-btn" onclick="window.open('https://asankhua.github.io/prompt-builder/', '_blank')">🛠️ PROMPT BUILDER <span style="font-size: 1.1em; line-height: 0;">↗</span></button>
             <button id="btn-hub" class="toggle-btn" onclick="setRole('hub')">⭐ MY HUB</button>
         </div>
     </nav>
@@ -1751,54 +1761,6 @@ After I answer all 4, generate an ETL Validation Plan including SQL queries for 
             }
 
             document.body.removeChild(textArea);
-        }
-
-        // Filter Logic for QA Tech Stack (isolated to QA view)
-        function filterQaCards(tech) {
-            const qaSection = document.getElementById('view-qa');
-            const grids = qaSection.querySelectorAll('.grid');
-            
-            grids.forEach(grid => {
-                const cards = Array.from(grid.querySelectorAll('.card'));
-                
-                cards.forEach(card => {
-                    const cardTech = card.getAttribute('data-tech') || '';
-                    
-                    if (tech === 'all') {
-                        card.style.display = 'flex';
-                        card.style.order = '0'; // Reset to default sort
-                    } else if (cardTech.includes(tech) && !cardTech.includes('general')) {
-                        // TIER 1: Highly specific tech cards jump to the absolute top
-                        card.style.display = 'flex';
-                        card.style.order = '-2'; 
-                    } else if (cardTech.includes(tech)) {
-                        // TIER 2: General cards explicitly tagged for this tech go next
-                        card.style.display = 'flex';
-                        card.style.order = '-1'; 
-                    } else if (cardTech.includes('general')) {
-                        // TIER 3: Keep generic cards visible underneath
-                        card.style.display = 'flex';
-                        card.style.order = '0'; 
-                    } else {
-                        card.style.display = 'none'; // Hide unrelated specific tech cards
-                    }
-                });
-            });
-
-            // Hide category titles and grid sections if all cards underneath them are hidden
-            qaSection.querySelectorAll('.category-title').forEach(title => {
-                const grid = title.nextElementSibling;
-                if (grid && grid.classList.contains('grid')) {
-                    const visibleCards = Array.from(grid.querySelectorAll('.card')).filter(c => c.style.display !== 'none');
-                    if (visibleCards.length === 0) {
-                        title.style.display = 'none';
-                        grid.style.display = 'none';
-                    } else {
-                        title.style.display = 'flex';
-                        grid.style.display = 'grid'; // Reverts to CSS Grid
-                    }
-                }
-            });
         }
     </script>
 </body>
