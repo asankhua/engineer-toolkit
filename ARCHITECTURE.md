@@ -1,10 +1,10 @@
-# System Architecture: Engineer's Toolkit
+# System Architecture: Engineer's Toolkit Pro
 
-This document outlines the comprehensive architecture, design decisions, data flow, and technical implementation details for the Engineer's Toolkit.
+This document outlines the comprehensive architecture, design decisions, data flow, and technical implementation details for the Engineer's Toolkit Pro.
 
 ## Executive Summary
 
-The Engineer's Toolkit is designed as a **Static Single Page Application (SPA)** following the **Zero Dependencies** architectural philosophy. The application requires no build steps, external frontend frameworks, backend servers, or databases. The entire application runs strictly within the client's browser, leveraging vanilla Web APIs for all interactions, styling, and state management.
+The Engineer's Toolkit Pro is designed as a **Static Single Page Application (SPA)** following the **Zero Dependencies** architectural philosophy. The application requires no build steps, external frontend frameworks, backend servers, or databases. The entire application runs strictly within the client's browser, leveraging vanilla Web APIs for all interactions, styling, and state management.
 
 ## High-Level Architecture
 
@@ -49,8 +49,8 @@ The Engineer's Toolkit is designed as a **Static Single Page Application (SPA)**
 ```css
 :root {
     /* CSS Custom Properties for theming */
-    --primary-ba: #7c3aed;
-    --primary-pm: #10b981;
+    --primary-ba: #6366f1;
+    --primary-pm: #059669;
     /* ... */
 }
 
@@ -133,7 +133,7 @@ You are a Senior Project Manager helping me create a comprehensive Project Chart
 {
     "et_dark_mode": true,           // Theme preference
     "et_favorites": ["ba-story", "arch-hld"], // Starred prompts
-    "et_recents": ["dev-regex", "qa-bdd"]    // Recently used (max 6)
+    "et_recents": ["dev-regex", "qa-bdd"],    // Recently used (max 6)
 }
 ```
 
@@ -486,6 +486,6 @@ Compression:
 
 ## Conclusion
 
-The Engineer's Toolkit architecture demonstrates how modern web technologies can create powerful, performant applications without external dependencies. The zero-dependency approach ensures maximum compatibility, security, and maintainability while providing a rich user experience comparable to framework-based applications.
+The Engineer's Toolkit Pro architecture demonstrates how modern web technologies can create powerful, performant applications without external dependencies. The zero-dependency approach ensures maximum compatibility, security, and maintainability while providing a rich user experience comparable to framework-based applications.
 
 This architecture serves as a reference for building scalable, maintainable web applications using vanilla web technologies, proving that complex functionality can be achieved without the overhead of modern development toolchains.
