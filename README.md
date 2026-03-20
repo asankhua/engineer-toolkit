@@ -1,6 +1,6 @@
-# 🛠️ Engineer's Toolkit | Full Lifecycle Hub
+# 🛠️ Engineer's Toolkit Pro | Professional Development Hub
 
-Engineer's Toolkit is a lightweight, fully interactive Single Page Application (SPA) designed to bridge business strategy with technical execution. It provides a curated, role-specific collection of AI prompts tailored for the entire Software Development Life Cycle (SDLC) — helping Business Analysts, Project Managers, Architects, Developers, and Testers supercharge their AI workflows.
+Engineer's Toolkit Pro is a lightweight, fully interactive Single Page Application (SPA) designed to bridge business strategy with technical execution. It provides a curated, role-specific collection of AI prompts tailored for the entire Software Development Life Cycle (SDLC) — helping Business Analysts, Project Managers, Architects, Developers, and Testers supercharge their AI workflows.
 
 ## ✨ Features
 
@@ -14,9 +14,11 @@ Engineer's Toolkit is a lightweight, fully interactive Single Page Application (
 
 📋 **One-Click Copy**: Preview prompts in a sleek modal and copy them instantly to your clipboard with premium toast notifications.
 
+📊 **Usage Analytics**: Professional statistics dashboard showing today's views, copies, and total favorites.
+
 ⚡ **Zero Dependencies**: Built entirely with vanilla HTML, CSS, and JavaScript. No build steps, frameworks, or databases required.
 
-� **Responsive Design**: Fully responsive layout that works seamlessly across desktop, tablet, and mobile devices.
+📱 **Responsive Design**: Fully responsive layout that works seamlessly across desktop, tablet, and mobile devices.
 
 🔒 **Privacy-First**: 100% client-side application with no data transmission, tracking, or server dependencies.
 
@@ -26,7 +28,7 @@ Engineer's Toolkit is a lightweight, fully interactive Single Page Application (
 - **HTML5**: Semantic structure with embedded prompt repository system
 - **CSS3**: Advanced styling with CSS Custom Properties, Flexbox, Grid, and Glassmorphism effects
 - **Vanilla JavaScript (ES6+)**: Modern JavaScript with DOM manipulation, event handling, and local storage management
-- **Web APIs**: Clipboard API, Local Storage API, CSS Variables
+- **Web APIs**: Local Storage API, CSS Variables
 
 ### External Dependencies
 - **Google Fonts**: Inter and Plus Jakarta Sans font families via CDN
@@ -41,7 +43,7 @@ Engineer's Toolkit is a lightweight, fully interactive Single Page Application (
 
 ## 👥 Roles & Prompt Categories
 
-### Business Analyst (BA) - 🟣 Violet Theme
+### Business Analyst (BA) - 🟣 Indigo Theme
 - **User Stories**: Comprehensive user story generation with acceptance criteria
 - **Gap Analysis**: As-Is vs To-Be state analysis with impact assessment
 - **Use Cases**: Detailed use case documentation with preconditions and flows
@@ -87,7 +89,7 @@ Engineer's Toolkit is a lightweight, fully interactive Single Page Application (
 ### Installation & Usage
 1. **Clone or Download** this repository
    ```bash
-   git clone https://github.com/your-username/engineer-toolkit.git
+   git clone https://github.com/asankhua/engineer-toolkit.git
    cd engineer-toolkit
    ```
 
@@ -110,7 +112,7 @@ Engineer's Toolkit is a lightweight, fully interactive Single Page Application (
 
 ### Adding Custom Prompts
 1. Open `index.html` in your text editor
-2. Scroll to the `<!-- Hidden Prompt Repository -->` section (around line 1060)
+2. Scroll to the `<!-- Hidden Prompt Repository -->` section (around line 1370)
 3. Add a new prompt:
    ```html
    <textarea id="your-custom-id">Your prompt text here...</textarea>
@@ -128,19 +130,19 @@ Engineer's Toolkit is a lightweight, fully interactive Single Page Application (
 Edit CSS variables in the `:root` selector:
 ```css
 :root {
-    --primary-ba: #7c3aed; /* Change BA theme color */
-    --primary-pm: #10b981; /* Change PM theme color */
+    --primary-ba: #6366f1; /* Change BA theme color */
+    --primary-pm: #059669; /* Change PM theme color */
     /* ... other theme colors */
 }
 ```
 
-## � Project Structure
+## 📊 Project Structure
 
 ```
 engineer-toolkit/
 ├── README.md              # Project documentation
 ├── ARCHITECTURE.md        # Technical architecture details
-└── index.html            # Complete application (1,768 lines)
+└── index.html            # Complete application (2,200+ lines)
     ├── HTML Structure     # Semantic markup and prompt repository
     ├── CSS Styling        # Responsive design and theming
     └── JavaScript Logic   # Application functionality
@@ -170,7 +172,7 @@ engineer-toolkit/
 
 ### Local Development
 - **File Protocol**: `file:///path/to/engineer-toolkit/index.html`
-- **Local Server**: `http://localhost:8000/index.html` (optional)
+- **Local Server**: `http://localhost:8000/index.html` (recommended)
 
 ### Deployment Options
 - **GitHub Pages**: Free static hosting
@@ -180,11 +182,11 @@ engineer-toolkit/
 
 ## 📈 Usage Statistics
 
-### Prompt Categories
-- **Total Prompts**: 25+ specialized templates
-- **Role Coverage**: 5 distinct engineering disciplines
-- **Use Cases**: 50+ common software development scenarios
-- **Integration**: Compatible with all major AI assistants
+The toolkit includes a professional analytics dashboard that tracks:
+- **Daily Views**: Number of prompts viewed per day
+- **Daily Copies**: Number of prompts copied to clipboard
+- **Total Favorites**: Count of saved favorite prompts
+- **Available Prompts**: Total number of professional templates
 
 ### Performance Metrics
 - **Load Time**: < 100ms on average
@@ -207,15 +209,15 @@ engineer-toolkit/
 - Implement ES6+ JavaScript best practices
 - Maintain accessibility standards (WCAG 2.1)
 
-## �📜 License
+## 📜 License
 
 © 2026 ASHISH KUMAR SANKHUA. ALL RIGHTS RESERVED.
 
 ## 🔗 Related Resources
 
 - [Architecture Documentation](./ARCHITECTURE.md)
-- [Live Demo](https://your-demo-url.com) (if available)
-- [GitHub Repository](https://github.com/your-username/engineer-toolkit)
+- [Live Demo](https://asankhua.github.io/engineer-toolkit)
+- [GitHub Repository](https://github.com/asankhua/engineer-toolkit)
 
 ---
 
