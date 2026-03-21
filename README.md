@@ -1,3 +1,5 @@
+https://github.com/user-attachments/assets/464cf5eb-54b3-4cf3-b252-5dbb4d1bf9c4
+
 # 🛠️ Engineer's Toolkit Pro | Professional Development Hub
 
 Engineer's Toolkit Pro is a lightweight, fully interactive Single Page Application (SPA) designed to bridge business strategy with technical execution. It provides a curated, role-specific collection of AI prompts tailored for the entire Software Development Life Cycle (SDLC) — helping Business Analysts, Project Managers, Architects, Developers, and Testers supercharge their AI workflows.
