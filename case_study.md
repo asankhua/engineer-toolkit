@@ -1,6 +1,7 @@
 # Engineer's Toolkit Pro | Product Case Study
 
-## Professional AI Prompt Toolkit for Software Development Teams
+**Product Name:** Engineer's Toolkit Pro  
+**Tagline:** Professional AI Prompt Toolkit for Software Development Teams
 
 **Author:** Ashish Kumar Sankhua | Product Manager  
 **Date:** March 27, 2026  
