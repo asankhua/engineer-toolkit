@@ -1,5 +1,3 @@
-# Engineer's Toolkit Pro | Product Case Study
-
 **Engineer's Toolkit Pro**  
 *Professional AI Prompt Toolkit for Software Development Teams*
 
